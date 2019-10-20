@@ -1,8 +1,6 @@
 package net.mcjukebox.plugin.sponge.sockets.listeners;
 
 import io.socket.emitter.Emitter;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import net.mcjukebox.plugin.sponge.MCJukebox;
 import net.mcjukebox.plugin.sponge.sockets.SocketHandler;
 import org.json.JSONObject;
@@ -17,8 +15,16 @@ import java.util.List;
 
 public class ConnectionListener {
 
-	@Getter private ConnectionFailedListener connectionFailedListener;
-	@Getter private ConnectionSuccessListener connectionSuccessListener;
+	public ConnectionFailedListener getConnectionFailedListener() {
+		return connectionFailedListener;
+	}
+
+	public ConnectionSuccessListener getConnectionSuccessListener() {
+		return connectionSuccessListener;
+	}
+
+	private ConnectionFailedListener connectionFailedListener;
+	private ConnectionSuccessListener connectionSuccessListener;
 
 	private SocketHandler socketHandler;
 	private HashMap<String, List<JSONObject>> queue = new HashMap<String, List<JSONObject>>();
@@ -54,10 +60,14 @@ public class ConnectionListener {
 
 	}
 
-	@AllArgsConstructor
 	public class ConnectionSuccessListener implements Emitter.Listener {
 
 		private DropListener dropListener;
+
+		public ConnectionSuccessListener(DropListener dropListener) {
+			this.dropListener = dropListener;
+		}
+
 
 		@Override
 		public void call(Object... objects) {

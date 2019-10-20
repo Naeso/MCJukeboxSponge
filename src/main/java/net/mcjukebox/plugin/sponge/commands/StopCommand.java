@@ -1,6 +1,5 @@
 package net.mcjukebox.plugin.sponge.commands;
 
-import lombok.Setter;
 import net.mcjukebox.plugin.sponge.api.JukeboxAPI;
 import net.mcjukebox.plugin.sponge.managers.LangManager;
 import org.spongepowered.api.Sponge;
@@ -12,14 +11,16 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.json.JSONObject;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.HashMap;
 
 public class StopCommand implements CommandExecutor {
 
-    @Setter
+    public static void setLangManager(LangManager langManager) {
+        StopCommand.langManager = langManager;
+    }
+
     private static LangManager langManager;
 
     @Override

@@ -1,6 +1,5 @@
 package net.mcjukebox.plugin.sponge.commands;
 
-import lombok.Setter;
 import net.mcjukebox.plugin.sponge.MCJukebox;
 import net.mcjukebox.plugin.sponge.managers.LangManager;
 import net.mcjukebox.plugin.sponge.managers.shows.Show;
@@ -17,7 +16,10 @@ import java.util.HashMap;
 
 public class ShowCommand implements CommandExecutor {
 
-    @Setter
+    public static void setLangManager(LangManager langManager) {
+        ShowCommand.langManager = langManager;
+    }
+
     private static LangManager langManager;
 
     @Override

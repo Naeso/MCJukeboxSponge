@@ -1,14 +1,20 @@
 package net.mcjukebox.plugin.sponge.events;
 
-import lombok.Getter;
 import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.event.impl.AbstractEvent;
 
 public class ClientDisconnectEvent extends AbstractEvent {
 
-	@Getter private String username;
-	@Getter private long timestamp;
+	public String getUsername() {
+		return username;
+	}
+
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	private String username;
+	private long timestamp;
 	private Cause cause;
 
 	public ClientDisconnectEvent(String username, long timestamp, Cause cause) {

@@ -2,21 +2,75 @@ package net.mcjukebox.plugin.sponge.api.models;
 
 import net.mcjukebox.plugin.sponge.MCJukebox;
 import net.mcjukebox.plugin.sponge.api.ResourceType;
-import lombok.Getter;
-import lombok.Setter;
 import org.json.JSONObject;
 
 public class Media {
 
-    @Getter @Setter private ResourceType type = ResourceType.SOUND_EFFECT;
-    @Getter @Setter private String URL = "";
+    public ResourceType getType() {
+        return type;
+    }
+
+    public void setType(ResourceType type) {
+        this.type = type;
+    }
+
+    public String getURL() {
+        return URL;
+    }
+
+    public void setURL(String URL) {
+        this.URL = URL;
+    }
+
+    public int getVolume() {
+        return volume;
+    }
+
+    public void setVolume(int volume) {
+        this.volume = volume;
+    }
+
+    public boolean isLooping() {
+        return looping;
+    }
+
+    public void setLooping(boolean looping) {
+        this.looping = looping;
+    }
+
+    public int getFadeDuration() {
+        return fadeDuration;
+    }
+
+    public void setFadeDuration(int fadeDuration) {
+        this.fadeDuration = fadeDuration;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
+    private ResourceType type = ResourceType.SOUND_EFFECT;
+    private String URL = "";
 
     //The following options are only supported for the MUSIC resource type
-    @Getter @Setter private int volume = 100;
-    @Getter @Setter private boolean looping = true;
-    @Getter @Setter private int fadeDuration = -1;
-    @Getter @Setter private long startTime = -1;
-    @Getter @Setter private String channel = "default";
+    private int volume = 100;
+    private boolean looping = true;
+    private int fadeDuration = -1;
+    private long startTime = -1;
+    private String channel = "default";
 
     public Media(ResourceType type, String URL) {
         setType(type);

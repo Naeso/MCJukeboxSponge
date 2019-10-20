@@ -1,18 +1,21 @@
 package net.mcjukebox.plugin.sponge.sockets;
 
-import lombok.Getter;
 import net.mcjukebox.plugin.sponge.MCJukebox;
 import net.mcjukebox.plugin.sponge.utils.DataUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.args.CommandArgs;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;;
 
 public class KeyHandler {
 
 	private SocketHandler socketHandler;
-	@Getter private CommandSource currentlyTryingKey;
+
+	public CommandSource getCurrentlyTryingKey() {
+		return currentlyTryingKey;
+	}
+
+	private CommandSource currentlyTryingKey;
 
 	public KeyHandler(SocketHandler socketHandler) {
 		this.socketHandler = socketHandler;

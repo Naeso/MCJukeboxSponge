@@ -1,6 +1,5 @@
 package net.mcjukebox.plugin.sponge.listeners;
 
-import lombok.Getter;
 import net.mcjukebox.plugin.sponge.MCJukebox;
 import net.mcjukebox.plugin.sponge.api.JukeboxAPI;
 import net.mcjukebox.plugin.sponge.api.ResourceType;
@@ -24,7 +23,12 @@ import java.util.UUID;
 public class RegionListener{
 
     private RegionManager utils;
-    @Getter private HashMap<UUID, String> playerInRegion = new HashMap<UUID, String>();
+
+    public HashMap<UUID, String> getPlayerInRegion() {
+        return playerInRegion;
+    }
+
+    private HashMap<UUID, String> playerInRegion = new HashMap<UUID, String>();
 
     public RegionListener(RegionManager utils){
         this.utils = utils;

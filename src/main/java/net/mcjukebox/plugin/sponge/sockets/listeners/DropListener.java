@@ -1,12 +1,15 @@
 package net.mcjukebox.plugin.sponge.sockets.listeners;
 
 import io.socket.emitter.Emitter;
-import lombok.Setter;
 import net.mcjukebox.plugin.sponge.MCJukebox;
 
 public class DropListener implements Emitter.Listener {
 
-	@Setter private long lastDripSent;
+	public void setLastDripSent(long lastDripSent) {
+		this.lastDripSent = lastDripSent;
+	}
+
+	private long lastDripSent;
 
 	@Override
 	public void call(Object... objects) {

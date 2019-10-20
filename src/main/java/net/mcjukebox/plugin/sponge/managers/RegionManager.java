@@ -1,6 +1,5 @@
 package net.mcjukebox.plugin.sponge.managers;
 
-import lombok.Getter;
 import net.mcjukebox.plugin.sponge.MCJukebox;
 import net.mcjukebox.plugin.sponge.api.JukeboxAPI;
 import net.mcjukebox.plugin.sponge.managers.shows.ShowManager;
@@ -15,7 +14,10 @@ import java.util.UUID;
 
 public class RegionManager{
 
-    @Getter
+    public HashMap<String, String> getRegions() {
+        return regions;
+    }
+
     private HashMap<String, String> regions;
     private Path folder;
 

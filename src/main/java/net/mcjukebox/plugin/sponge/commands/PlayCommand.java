@@ -1,7 +1,5 @@
 package net.mcjukebox.plugin.sponge.commands;
 
-import lombok.AllArgsConstructor;
-import lombok.Setter;
 import net.mcjukebox.plugin.sponge.api.JukeboxAPI;
 import net.mcjukebox.plugin.sponge.api.ResourceType;
 import net.mcjukebox.plugin.sponge.api.models.Media;
@@ -18,12 +16,18 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import java.util.HashMap;
 
-@AllArgsConstructor
 public class PlayCommand implements CommandExecutor {
 
     private ResourceType type;
 
-    @Setter
+    public PlayCommand(ResourceType type){
+        this.type = type;
+    }
+
+    public static void setLangManager(LangManager langManager) {
+        PlayCommand.langManager = langManager;
+    }
+
     private static LangManager langManager;
 
     @Override

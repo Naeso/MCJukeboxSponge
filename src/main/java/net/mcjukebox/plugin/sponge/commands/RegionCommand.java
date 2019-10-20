@@ -1,6 +1,5 @@
 package net.mcjukebox.plugin.sponge.commands;
 
-import lombok.AllArgsConstructor;
 import net.mcjukebox.plugin.sponge.MCJukebox;
 import net.mcjukebox.plugin.sponge.managers.RegionManager;
 import net.mcjukebox.plugin.sponge.utils.MessageUtils;
@@ -12,10 +11,13 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-@AllArgsConstructor
 public class RegionCommand implements CommandExecutor {
 
     private RegionManager regionManager;
+
+    public RegionCommand(RegionManager regionManager) {
+        this.regionManager = regionManager;
+    }
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {

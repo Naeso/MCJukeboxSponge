@@ -1,7 +1,5 @@
 package net.mcjukebox.plugin.sponge.managers.shows;
 
-import lombok.Getter;
-import lombok.Setter;
 import net.mcjukebox.plugin.sponge.MCJukebox;
 import net.mcjukebox.plugin.sponge.api.JukeboxAPI;
 import net.mcjukebox.plugin.sponge.api.ResourceType;
@@ -14,9 +12,26 @@ import java.util.UUID;
 
 public class Show {
 
-	@Getter private HashMap<UUID, Boolean> members = new HashMap<UUID, Boolean>();
-	@Getter private Media currentTrack;
-	@Getter @Setter private String channel = "default";
+	public HashMap<UUID, Boolean> getMembers() {
+		return members;
+	}
+
+	public Media getCurrentTrack() {
+		return currentTrack;
+	}
+
+	private HashMap<UUID, Boolean> members = new HashMap<UUID, Boolean>();
+	private Media currentTrack;
+
+	public String getChannel() {
+		return channel;
+	}
+
+	public void setChannel(String channel) {
+		this.channel = channel;
+	}
+
+	private String channel = "default";
 
 	public void addMember(Player player, boolean addedByRegion) {
 		if(members.containsKey(player.getUniqueId())) return;

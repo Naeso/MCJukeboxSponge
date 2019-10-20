@@ -1,6 +1,5 @@
 package net.mcjukebox.plugin.sponge.utils;
 
-import lombok.Setter;
 import net.mcjukebox.plugin.sponge.managers.LangManager;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
@@ -9,7 +8,11 @@ import org.spongepowered.api.text.format.TextColors;
 
 public class MessageUtils {
 
-	@Setter private static LangManager langManager;
+	public static void setLangManager(LangManager langManager) {
+		MessageUtils.langManager = langManager;
+	}
+
+	private static LangManager langManager;
 	private Player player;
 
 	public static void sendMessage(CommandSource src, String message){

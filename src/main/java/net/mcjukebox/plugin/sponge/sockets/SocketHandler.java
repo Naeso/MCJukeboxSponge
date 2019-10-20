@@ -1,6 +1,5 @@
 package net.mcjukebox.plugin.sponge.sockets;
 
-import lombok.Getter;
 import net.mcjukebox.plugin.sponge.MCJukebox;
 import net.mcjukebox.plugin.sponge.sockets.listeners.*;
 import io.socket.client.IO;
@@ -12,13 +11,42 @@ import java.util.concurrent.TimeUnit;
 
 public class SocketHandler {
 
-	@Getter private Socket server;
-	@Getter private ReconnectTask reconnectTask;
-	@Getter private DripTask dripTask;
-	@Getter private DropListener dropListener = new DropListener();
-	@Getter private TokenListener tokenListener;
-	@Getter private KeyHandler keyHandler = new KeyHandler(this);
-	@Getter private ConnectionListener connectionListener = new ConnectionListener(this);
+	private Socket server;
+	private ReconnectTask reconnectTask;
+	private DripTask dripTask;
+	private DropListener dropListener = new DropListener();
+	private TokenListener tokenListener;
+	private KeyHandler keyHandler = new KeyHandler(this);
+
+	public Socket getServer() {
+		return server;
+	}
+
+	public ReconnectTask getReconnectTask() {
+		return reconnectTask;
+	}
+
+	public DripTask getDripTask() {
+		return dripTask;
+	}
+
+	public DropListener getDropListener() {
+		return dropListener;
+	}
+
+	public TokenListener getTokenListener() {
+		return tokenListener;
+	}
+
+	public KeyHandler getKeyHandler() {
+		return keyHandler;
+	}
+
+	public ConnectionListener getConnectionListener() {
+		return connectionListener;
+	}
+
+	private ConnectionListener connectionListener = new ConnectionListener(this);
 
 	public SocketHandler() {
 		reconnectTask = new ReconnectTask(this);

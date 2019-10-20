@@ -1,7 +1,5 @@
 package net.mcjukebox.plugin.sponge.managers.shows;
 
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +7,15 @@ import java.util.UUID;
 
 public class ShowManager {
 
-	@Getter private HashMap<String, Show> shows = new HashMap<String, Show>();
+	public HashMap<String, Show> getShows() {
+		return shows;
+	}
+
+	public void setShows(HashMap<String, Show> shows) {
+		this.shows = shows;
+	}
+
+	private HashMap<String, Show> shows = new HashMap<String, Show>();
 
 	public Show getShow(String name) {
 		name = name.replace("@", "");

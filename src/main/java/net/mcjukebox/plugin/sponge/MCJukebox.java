@@ -1,7 +1,6 @@
 package net.mcjukebox.plugin.sponge;
 
 import com.google.inject.Inject;
-import lombok.Getter;
 import net.mcjukebox.plugin.sponge.commands.JukeboxCommandExecutor;
 import net.mcjukebox.plugin.sponge.listeners.RegionListener;
 import net.mcjukebox.plugin.sponge.managers.LangManager;
@@ -26,19 +25,46 @@ import java.util.concurrent.TimeUnit;
 
 @Plugin(
         id = "mcjukebox",
-        name = "Mcjukebox",
-        description = "Here lies an example plugin definition"
+        name = "Mcjukebox"
 )
 public class MCJukebox {
 
+    private static MCJukebox instance;
 
-    @Getter private static MCJukebox instance;
-    @Getter private SocketHandler socketHandler;
-    @Getter private RegionManager regionManager;
-    @Getter private RegionListener regionListener;
-    @Getter private LangManager langManager;
-    @Getter private ShowManager showManager;
-    @Getter private TimeUtils timeUtils;
+    public static MCJukebox getInstance() {
+        return instance;
+    }
+
+    public SocketHandler getSocketHandler() {
+        return socketHandler;
+    }
+
+    public RegionManager getRegionManager() {
+        return regionManager;
+    }
+
+    public RegionListener getRegionListener() {
+        return regionListener;
+    }
+
+    public LangManager getLangManager() {
+        return langManager;
+    }
+
+    public ShowManager getShowManager() {
+        return showManager;
+    }
+
+    public TimeUtils getTimeUtils() {
+        return timeUtils;
+    }
+
+    private SocketHandler socketHandler;
+    private RegionManager regionManager;
+    private RegionListener regionListener;
+    private LangManager langManager;
+    private ShowManager showManager;
+    private TimeUtils timeUtils;
     JukeboxCommandExecutor jukeboxCommand;
 
     @Inject

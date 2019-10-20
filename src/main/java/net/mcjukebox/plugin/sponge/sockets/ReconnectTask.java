@@ -1,7 +1,5 @@
 package net.mcjukebox.plugin.sponge.sockets;
 
-import lombok.Setter;
-
 import java.util.Random;
 
 public class ReconnectTask implements Runnable {
@@ -9,7 +7,12 @@ public class ReconnectTask implements Runnable {
 	private SocketHandler socketHandler;
 	private long lastReconnectionAttempt = 0;
 	private int reconnectionFailures = 0;
-	@Setter private boolean reconnecting = true;
+
+	public void setReconnecting(boolean reconnecting) {
+		this.reconnecting = reconnecting;
+	}
+
+	private boolean reconnecting = true;
 
 	public ReconnectTask(SocketHandler socketHandler) {
 		this.socketHandler = socketHandler;
