@@ -2,7 +2,6 @@ package net.mcjukebox.plugin.sponge;
 
 import com.google.inject.Inject;
 import lombok.Getter;
-import net.mcjukebox.plugin.sponge.commands.JukeboxCommand;
 import net.mcjukebox.plugin.sponge.commands.JukeboxCommandExecutor;
 import net.mcjukebox.plugin.sponge.listeners.RegionListener;
 import net.mcjukebox.plugin.sponge.managers.LangManager;

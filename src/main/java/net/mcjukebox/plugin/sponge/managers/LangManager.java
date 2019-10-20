@@ -1,7 +1,6 @@
 package net.mcjukebox.plugin.sponge.managers;
 
 import org.json.JSONObject;
-import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 public class LangManager {

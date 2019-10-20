@@ -14,9 +14,9 @@ dependencies {
     annotationProcessor 'org.spongepowered:spongeapi:7.1.0'
     implementation 'com.github.JimiIT92:UniverseGuardAPI7:895d542be38f49bea466a6a79662a99b0861d7d9'
     compileOnly 'org.projectlombok:lombok:1.18.10'
-    compileOnly 'io.socket:socket.io-client:1.0.0'
     annotationProcessor 'org.projectlombok:lombok:1.18.10'
-    compileOnly group: 'org.json', name: 'json', version: '20190722'
+    compileOnly 'io.socket:socket.io-client:1.0.0'
+    compile group: 'org.json', name: 'json', version: '20190722'
 }
 
 allprojects {
