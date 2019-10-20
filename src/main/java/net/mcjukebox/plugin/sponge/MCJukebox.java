@@ -14,8 +14,8 @@ import net.mcjukebox.plugin.sponge.utils.TimeUtils;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
-import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginManager;
@@ -25,7 +25,9 @@ import java.util.concurrent.TimeUnit;
 
 @Plugin(
         id = "mcjukebox",
-        name = "Mcjukebox"
+        name = "Mcjukebox",
+        description = "jukebox",
+        version = ""
 )
 public class MCJukebox {
 
@@ -65,7 +67,6 @@ public class MCJukebox {
     private LangManager langManager;
     private ShowManager showManager;
     private TimeUtils timeUtils;
-    JukeboxCommandExecutor jukeboxCommand;
 
     @Inject
     public static PluginManager pluginManager;
@@ -93,7 +94,7 @@ public class MCJukebox {
             Sponge.getEventManager().registerListeners(this, regionListener);
         }
 
-        jukeboxCommand = new JukeboxCommandExecutor(regionManager);
+        JukeboxCommandExecutor jukeboxCommand = new JukeboxCommandExecutor(regionManager);
 
         logger.info("McJukebox for Sponge ready to go.");
     }
