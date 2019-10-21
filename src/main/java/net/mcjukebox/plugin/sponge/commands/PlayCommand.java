@@ -1,0 +1,103 @@
+package net.mcjukebox.plugin.sponge.commands;
+
+import net.mcjukebox.plugin.sponge.MCJukebox;
+import net.mcjukebox.plugin.sponge.api.JukeboxAPI;
+import net.mcjukebox.plugin.sponge.api.ResourceType;
+import net.mcjukebox.plugin.sponge.api.models.Media;
+import net.mcjukebox.plugin.sponge.managers.LangManager;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.args.CommandContext;
+import org.spongepowered.api.command.spec.CommandExecutor;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
+
+import java.util.HashMap;
+
+public class PlayCommand implements CommandExecutor {
+
+    private JukeboxAPI api;
+
+    private MCJukebox currentInstance;
+
+    private ResourceType type;
+
+    public PlayCommand(ResourceType type){
+        this.type = type;
+    }
+
+    public PlayCommand(MCJukebox instance) {
+        this.currentInstance = instance;
+        api = new JukeboxAPI(instance);
+    }
+
+    public static void setLangManager(LangManager langManager) {
+        PlayCommand.langManager = langManager;
+    }
+
+    private static LangManager langManager;
+
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        String url = args.getOne("URL").get().toString();
+        Media toPlay = new Media(type, url, currentInstance);
+
+        if (args.hasAny("options")) {
+            JSONObject options = jsonFromArgs((String[])args.getAll("options").toArray(), 2);
+
+            if (options == null) {
+                src.sendMessage(Text.builder("Unable to parse options as JSON.").color(TextColors.RED).build());
+                return CommandResult.empty();
+            }
+
+            try {
+                toPlay.loadOptions(options);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (args.getOne("userShow").get().toString().startsWith("@")) {
+            try {
+                api.getShowManager().getShow(args.getOne("userShow").get().toString()).play(toPlay);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Player player = Sponge.getServer().getPlayer(args.<String>getOne("userShow").get()).get();
+            if (player.isOnline()) {
+                try {
+                    api.play(player, toPlay);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                HashMap<String, String> findAndReplace = new HashMap<String, String>();
+                findAndReplace.put("user", args.getOne("userShow").get().toString());
+                try {
+                    src.sendMessage(Text.builder(langManager.get("command.notOnline") + findAndReplace).build());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return CommandResult.success();
+    }
+
+    private JSONObject jsonFromArgs(String[] args, int startPoint) {
+        StringBuilder json = new StringBuilder();
+        for(int i = startPoint; i < args.length; i++) json.append(args[i]);
+
+        try {
+            return new JSONObject(json.toString());
+        }catch(Exception ex) {
+            return null;
+        }
+    }
+}
