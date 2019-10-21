@@ -1,12 +1,10 @@
 package net.mcjukebox.plugin.sponge.utils;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
 import net.mcjukebox.plugin.sponge.sockets.api.KeyClass;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class DataUtils {
@@ -31,24 +29,20 @@ public class DataUtils {
     }
 
     public String loadAPIKey(Path pathToLoadFrom){
-        System.out.println("got here");
         apiKey = this.loadAPIClass(pathToLoadFrom);
-        System.out.println();
         if (apiKey.getKeyValue() != null) {
             return apiKey.getKeyValue();
         }
-        return null;
+        return "dummy";
     }
 
     private KeyClass loadAPIClass(Path pathToLoadFrom){
-        System.out.println("got here 2");
         try {
             JsonReader reader = new JsonReader(new FileReader(pathToLoadFrom.toFile()));
             return gson.fromJson(reader, KeyClass.class);
         } catch (FileNotFoundException e) {
-            System.out.println("got here 3");
             e.printStackTrace();
-            return null;
+            return new KeyClass("dummy");
         }
     }
 }

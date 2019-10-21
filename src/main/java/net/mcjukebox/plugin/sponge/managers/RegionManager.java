@@ -33,7 +33,7 @@ public class RegionManager{
         this.currentInstance = instance;
         dataUtils = new DataUtils();
         api = new JukeboxAPI(instance);
-        load();
+        //load();
     }
 
     private void load(){

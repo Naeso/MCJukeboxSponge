@@ -6,6 +6,7 @@ import net.mcjukebox.plugin.sponge.sockets.SocketHandler;
 import org.json.JSONObject;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
@@ -32,7 +33,7 @@ public class ConnectionListener {
 	public ConnectionListener(SocketHandler socketHandler) {
 		this.socketHandler = socketHandler;
 		connectionFailedListener = new ConnectionFailedListener();
-		connectionSuccessListener = new ConnectionSuccessListener(socketHandler.getDropListener());
+		connectionSuccessListener = new ConnectionSuccessListener(socketHandler.getDropListener(), socketHandler);
 	}
 
 	public class ConnectionFailedListener implements Emitter.Listener {
@@ -56,44 +57,42 @@ public class ConnectionListener {
 			recipient.sendMessage(Text.builder("If the problem persists, please email support@mcjukebox.net").color(TextColors.RED).build());
 			noConnectionWarned = true;
 		}
-
 	}
 
 	public class ConnectionSuccessListener implements Emitter.Listener {
-
-
 		private MCJukebox instance = new MCJukebox();
 
 		private DropListener dropListener;
+		private SocketHandler socketHandlerSuccess;
 
-		public ConnectionSuccessListener(DropListener dropListener) {
+		public ConnectionSuccessListener(DropListener dropListener, SocketHandler socketHandler) {
 			this.dropListener = dropListener;
+			this.socketHandlerSuccess = socketHandler;
 		}
-
 
 		@Override
 		public void call(Object... objects) {
-			CommandSource recipient = socketHandler.getKeyHandler().getCurrentlyTryingKey();
+			CommandSource recipient = socketHandlerSuccess.getKeyHandler().getCurrentlyTryingKey();
 			String message = "Key accepted and connection to MCJukebox established.";
 
 			if (recipient != null){
-				recipient.sendMessage(Text.builder(message).build());
+				recipient.sendMessage(Text.of(message));
 			} else {
 				instance.logger.info(message);
 			}
 
 			dropListener.setLastDripSent(System.currentTimeMillis());
-			socketHandler.emit("drip", null);
+			socketHandlerSuccess.emit("drip", null);
 
 			for(String channel : queue.keySet()) {
 				for(JSONObject params : queue.get(channel)) {
-					socketHandler.emit(channel, params);
+					socketHandlerSuccess.emit(channel, params);
 				}
 			}
 
 			queue.clear();
 			noConnectionWarned = false;
-			socketHandler.getReconnectTask().reset();
+			socketHandlerSuccess.getReconnectTask().reset();
 		}
 
 	}

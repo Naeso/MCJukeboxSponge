@@ -6,6 +6,7 @@ import net.mcjukebox.plugin.sponge.MCJukebox;
 import net.mcjukebox.plugin.sponge.sockets.listeners.*;
 import org.json.JSONObject;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.scheduler.Task;
 
 import java.util.concurrent.TimeUnit;
 
@@ -18,6 +19,7 @@ public class SocketHandler {
 	private DropListener dropListener;
 	private TokenListener tokenListener;
 	private KeyHandler keyHandler;
+	private Task.Builder taskBuilder = Task.builder();
 
 	public Socket getServer() {
 		return server;
@@ -57,8 +59,9 @@ public class SocketHandler {
 		dripTask = new DripTask(this);
 		tokenListener = new TokenListener();
 
-		Sponge.getScheduler().createAsyncExecutor(currentInstance).schedule(reconnectTask,30, TimeUnit.SECONDS);
-		Sponge.getScheduler().createAsyncExecutor(currentInstance).schedule(dripTask,30, TimeUnit.SECONDS);
+		taskBuilder.async().execute(reconnectTask).delay(30, TimeUnit.SECONDS).submit(instance);
+		taskBuilder.async().execute(dripTask).delay(30, TimeUnit.SECONDS).submit(instance);
+
 		attemptConnection();
 	}
 

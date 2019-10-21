@@ -70,7 +70,6 @@ public class MCJukebox {
         return logger;
     }
 
-
     private SocketHandler socketHandler;
     private RegionManager regionManager;
     private RegionListener regionListener;
@@ -117,12 +116,13 @@ public class MCJukebox {
     }
 
     public String getAPIKey(){
+        dataUtils = new DataUtils();
         if (Files.exists(privateConfigDir.resolve("api.key"))){
             return dataUtils.loadAPIKey(privateConfigDir.resolve("api.key"));
         }
         else{
             logger.info("Api.key file dosen't exists !");
-            return null;
+            return "dummy";
         }
     }
 
