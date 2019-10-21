@@ -31,8 +31,8 @@ public class JukeboxCommandExecutor{
                 .description(Text.of("music command"))
                 .executor(new PlayCommand(currentInstance, ResourceType.MUSIC))
                 .arguments(
-                        GenericArguments.string(Text.of("usershow")),
-                        GenericArguments.string(Text.of("url")),
+                        GenericArguments.string(Text.of("UserOrShow")),
+                        GenericArguments.string(Text.of("URL")),
                         GenericArguments.optionalWeak(GenericArguments.remainingJoinedStrings(Text.of("options")))
                 )
                 .build();
@@ -41,23 +41,23 @@ public class JukeboxCommandExecutor{
                 .description(Text.of("sound command"))
                 .executor(new PlayCommand(currentInstance, ResourceType.SOUND_EFFECT))
                 .arguments(
-                        GenericArguments.string(Text.of("usershow")),
+                        GenericArguments.string(Text.of("UserOrShow")),
                         GenericArguments.string(Text.of("URL")),
                         GenericArguments.optionalWeak(GenericArguments.remainingJoinedStrings(Text.of("options")))
                 )
                 .build();
 
-        CommandSpec RegionCommand = CommandSpec.builder()
+        CommandSpec regionCommand = CommandSpec.builder()
                 .description(Text.of("region command"))
                 .executor(new RegionCommand(regionManager, currentInstance))
                 .arguments(
                         GenericArguments.string(Text.of("addRemoveList")),
                         GenericArguments.optionalWeak(GenericArguments.string(Text.of("idRegion"))),
-                        GenericArguments.optionalWeak(GenericArguments.string(Text.of("urlMusic")))
+                        GenericArguments.optionalWeak(GenericArguments.string(Text.of("URL")))
                 )
                 .build();
 
-        CommandSpec SetKeyCommand = CommandSpec.builder()
+        CommandSpec setKeyCommand = CommandSpec.builder()
                 .description(Text.of("setkey api command"))
                 .executor(new SetKeyCommand(currentInstance))
                 .arguments(
@@ -79,8 +79,8 @@ public class JukeboxCommandExecutor{
                 .description(Text.of("stop command"))
                 .executor(new StopCommand(currentInstance))
                 .arguments(
-                        GenericArguments.string(Text.of("userShow")),
-                        GenericArguments.string(Text.of("selectionMusicAll")),
+                        GenericArguments.string(Text.of("UserOrShow")),
+                        GenericArguments.optional(GenericArguments.string(Text.of("MusicOrAll"))),
                         GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("options")))
                 )
                 .build();
@@ -91,8 +91,8 @@ public class JukeboxCommandExecutor{
                 .child(helpCommand, "help")
                 .child(musicCommand, "music")
                 .child(soundCommand, "sound")
-                .child(RegionCommand, "region")
-                .child(SetKeyCommand, "setkey")
+                .child(regionCommand, "region")
+                .child(setKeyCommand, "setkey")
                 .child(stopCommand, "stop")
                 .child(showCommand, "show")
                 .build();

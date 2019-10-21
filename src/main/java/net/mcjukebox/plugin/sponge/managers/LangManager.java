@@ -26,7 +26,7 @@ public class LangManager {
 	 * @param key Key to find
 	 * @return Value from the config
 	 */
-	public String get(String key) throws JSONException {
+	public String get(String key){
 		String[] elements = key.split("\\.");
 		JSONObject finalParent = keyValues;
 
@@ -39,6 +39,9 @@ public class LangManager {
 		if(elements.length == 0 && finalParent.has(key)) value = finalParent.getString(key);
 		else if(finalParent.has(elements[elements.length - 1])) value = finalParent.getString(elements[elements.length - 1]);
 
+		if(value != null){
+			return value;
+		}
 		return "Missing Key: " + key;
 	}
 
