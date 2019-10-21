@@ -29,21 +29,21 @@ public class JukeboxCommandExecutor{
 
         CommandSpec musicCommand = CommandSpec.builder()
                 .description(Text.of("music command"))
-                .executor(new PlayCommand(ResourceType.MUSIC))
+                .executor(new PlayCommand(currentInstance, ResourceType.MUSIC))
                 .arguments(
                         GenericArguments.string(Text.of("usershow")),
-                        GenericArguments.string(Text.of("URL")),
-                        GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("options")))
+                        GenericArguments.string(Text.of("url")),
+                        GenericArguments.optionalWeak(GenericArguments.remainingJoinedStrings(Text.of("options")))
                 )
                 .build();
 
         CommandSpec soundCommand = CommandSpec.builder()
                 .description(Text.of("sound command"))
-                .executor(new PlayCommand(ResourceType.SOUND_EFFECT))
+                .executor(new PlayCommand(currentInstance, ResourceType.SOUND_EFFECT))
                 .arguments(
                         GenericArguments.string(Text.of("usershow")),
                         GenericArguments.string(Text.of("URL")),
-                        GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("options")))
+                        GenericArguments.optionalWeak(GenericArguments.remainingJoinedStrings(Text.of("options")))
                 )
                 .build();
 
@@ -52,8 +52,8 @@ public class JukeboxCommandExecutor{
                 .executor(new RegionCommand(regionManager, currentInstance))
                 .arguments(
                         GenericArguments.string(Text.of("addRemoveList")),
-                        GenericArguments.optional(GenericArguments.string(Text.of("idRegion"))),
-                        GenericArguments.optional(GenericArguments.string(Text.of("urlMusic")))
+                        GenericArguments.optionalWeak(GenericArguments.string(Text.of("idRegion"))),
+                        GenericArguments.optionalWeak(GenericArguments.string(Text.of("urlMusic")))
                 )
                 .build();
 

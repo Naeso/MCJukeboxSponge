@@ -4,9 +4,13 @@ import net.mcjukebox.plugin.sponge.MCJukebox;
 
 public class TimeUtils {
 
-	private MCJukebox instance = new MCJukebox();
+	private MCJukebox instance;
 	private static boolean hasUpdated = false;
 	private static long offset = 0;
+
+	public TimeUtils(MCJukebox instance) {
+		this.instance = instance;
+	}
 
 	public boolean hasUpdated() {
 		return hasUpdated;

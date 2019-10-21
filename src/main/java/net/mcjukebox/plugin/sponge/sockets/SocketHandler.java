@@ -19,7 +19,6 @@ public class SocketHandler {
 	private DropListener dropListener;
 	private TokenListener tokenListener;
 	private KeyHandler keyHandler;
-	private Task.Builder taskBuilder = Task.builder();
 
 	public Socket getServer() {
 		return server;
@@ -49,7 +48,7 @@ public class SocketHandler {
 		return connectionListener;
 	}
 
-	private ConnectionListener connectionListener = new ConnectionListener(this);
+	private ConnectionListener connectionListener;
 
 	public SocketHandler(MCJukebox instance) {
 		this.currentInstance = instance;
@@ -58,7 +57,9 @@ public class SocketHandler {
 		reconnectTask = new ReconnectTask(this);
 		dripTask = new DripTask(this);
 		tokenListener = new TokenListener();
+		connectionListener = new ConnectionListener(this, currentInstance);
 
+		Task.Builder taskBuilder = Task.builder();
 		taskBuilder.async().execute(reconnectTask).delay(30, TimeUnit.SECONDS).submit(instance);
 		taskBuilder.async().execute(dripTask).delay(30, TimeUnit.SECONDS).submit(instance);
 

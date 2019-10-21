@@ -33,7 +33,7 @@ public class DataUtils {
         if (apiKey.getKeyValue() != null) {
             return apiKey.getKeyValue();
         }
-        return "dummy";
+        return null;
     }
 
     private KeyClass loadAPIClass(Path pathToLoadFrom){
@@ -42,7 +42,7 @@ public class DataUtils {
             return gson.fromJson(reader, KeyClass.class);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return new KeyClass("dummy");
+            return null;
         }
     }
 }

@@ -39,7 +39,7 @@ public class LangManager {
 		if(elements.length == 0 && finalParent.has(key)) value = finalParent.getString(key);
 		else if(finalParent.has(elements[elements.length - 1])) value = finalParent.getString(elements[elements.length - 1]);
 
-		return TextColors.RED + "Missing Key: " + key;
+		return "Missing Key: " + key;
 	}
 
 	/**

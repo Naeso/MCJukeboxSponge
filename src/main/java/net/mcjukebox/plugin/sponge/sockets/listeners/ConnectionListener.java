@@ -30,10 +30,10 @@ public class ConnectionListener {
 	private HashMap<String, List<JSONObject>> queue = new HashMap<String, List<JSONObject>>();
 	private boolean noConnectionWarned = false;
 
-	public ConnectionListener(SocketHandler socketHandler) {
+	public ConnectionListener(SocketHandler socketHandler, MCJukebox instance) {
 		this.socketHandler = socketHandler;
 		connectionFailedListener = new ConnectionFailedListener();
-		connectionSuccessListener = new ConnectionSuccessListener(socketHandler.getDropListener(), socketHandler);
+		connectionSuccessListener = new ConnectionSuccessListener(socketHandler.getDropListener(), socketHandler, instance);
 	}
 
 	public class ConnectionFailedListener implements Emitter.Listener {
@@ -60,14 +60,15 @@ public class ConnectionListener {
 	}
 
 	public class ConnectionSuccessListener implements Emitter.Listener {
-		private MCJukebox instance = new MCJukebox();
+		private MCJukebox instance;
 
 		private DropListener dropListener;
 		private SocketHandler socketHandlerSuccess;
 
-		public ConnectionSuccessListener(DropListener dropListener, SocketHandler socketHandler) {
+		public ConnectionSuccessListener(DropListener dropListener, SocketHandler socketHandler, MCJukebox instance) {
 			this.dropListener = dropListener;
 			this.socketHandlerSuccess = socketHandler;
+			this.instance = instance;
 		}
 
 		@Override
@@ -102,5 +103,4 @@ public class ConnectionListener {
 		toRun.add(params);
 		queue.put(channel, toRun);
 	}
-
 }

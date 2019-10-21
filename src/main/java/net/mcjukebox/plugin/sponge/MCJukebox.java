@@ -99,7 +99,7 @@ public class MCJukebox {
         socketHandler = new SocketHandler(this);
         regionManager = new RegionManager(this);
         showManager = new ShowManager(this);
-        timeUtils = new TimeUtils();
+        timeUtils = new TimeUtils(this);
 
         taskBuilder.async().execute(new ShowSyncTask()).delay(1, TimeUnit.SECONDS).submit(this);
 
@@ -122,7 +122,7 @@ public class MCJukebox {
         }
         else{
             logger.info("Api.key file dosen't exists !");
-            return "dummy";
+            return null;
         }
     }
 

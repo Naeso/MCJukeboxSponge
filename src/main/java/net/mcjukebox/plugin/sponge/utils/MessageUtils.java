@@ -16,7 +16,7 @@ public class MessageUtils {
 	private Player player;
 
 	public static void sendMessage(CommandSource src, String message){
-		src.sendMessage(Text.builder(langManager.get(message)).build());
+		src.sendMessage(Text.of(langManager.get(message)));
 	}
 
 	public static void sendURL(Player player, String token) {
