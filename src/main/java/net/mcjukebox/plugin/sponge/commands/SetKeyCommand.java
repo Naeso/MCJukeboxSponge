@@ -9,6 +9,8 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import java.io.IOException;
+
 public class SetKeyCommand implements CommandExecutor {
 
     private MCJukebox currentInstance;
@@ -19,9 +21,13 @@ public class SetKeyCommand implements CommandExecutor {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        currentInstance.getSocketHandler().getKeyHandler().tryKey(src, args.<String>getOne("apikey").get());
-        src.sendMessage(Text.builder("Trying key...").color(TextColors.GREEN).build());
-
+        try {
+            src.sendMessage(Text.builder("Trying key : " + args.<String>getOne("apikey").get()).color(TextColors.GREEN).build());
+            currentInstance.getSocketHandler().getKeyHandler().tryKey(src, args.<String>getOne("apikey").get());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return CommandResult.empty();
+        }
         return CommandResult.success();
     }
 }

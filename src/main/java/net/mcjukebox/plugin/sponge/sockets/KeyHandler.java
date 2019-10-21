@@ -1,16 +1,20 @@
 package net.mcjukebox.plugin.sponge.sockets;
 
 import net.mcjukebox.plugin.sponge.MCJukebox;
+import net.mcjukebox.plugin.sponge.sockets.api.KeyClass;
 import net.mcjukebox.plugin.sponge.utils.DataUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import java.io.IOException;
+
 public class KeyHandler {
 
 	private MCJukebox currentInstance;
-
+	private KeyClass apiKey;
+	private DataUtils dataUtils;
 	private SocketHandler socketHandler;
 
 	public CommandSource getCurrentlyTryingKey() {
@@ -22,6 +26,7 @@ public class KeyHandler {
 	public KeyHandler(SocketHandler socketHandler, MCJukebox instance) {
 		this.currentInstance = instance;
 		this.socketHandler = socketHandler;
+		dataUtils = new DataUtils();
 	}
 
 	public void onKeyRejected(String reason) {
@@ -34,9 +39,10 @@ public class KeyHandler {
 		}
 	}
 
-	public void tryKey(CommandSource sender, String key) {
+	public void tryKey(CommandSource sender, String key) throws IOException {
 		currentlyTryingKey = sender;
-		DataUtils.saveObjectToPath(key, currentInstance.getAPIKey());
+		apiKey = new KeyClass(key);
+		dataUtils.saveObjectToPath(apiKey, currentInstance.getApiKeyPath());
 		socketHandler.disconnect();
 		socketHandler.attemptConnection();
 	}

@@ -81,7 +81,6 @@ public class SocketHandler {
 
 			registerEventListeners();
 		}catch(Exception ex){
-			currentInstance.logger.error("An unknown error occurred, disabling plugin...");
 			ex.printStackTrace();
 		}
 	}

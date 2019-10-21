@@ -1,45 +1,53 @@
 package net.mcjukebox.plugin.sponge.utils;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.stream.JsonReader;
+import net.mcjukebox.plugin.sponge.sockets.api.KeyClass;
+
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class DataUtils {
 
-    /**
-     * Attempts to write an object to the provided path, creating the file if it does not already
-     * exist. Uses the default serialization methods, and as result, it is recommended that in
-     * Bukkit applications, it be used in conjunction with the Serialization package
-     *
-     * @param objectToSave The object which should be saved
-     * @param pathToSaveTo The path in which to save the object
-     */
-    public static <T extends Object> void saveObjectToPath(T objectToSave, Path pathToSaveTo) {
-        try {
-            File file = new File(String.valueOf(pathToSaveTo));
-            if(!file.getParentFile().exists()) file.getParentFile().mkdirs();
-            if(!file.exists()) file.createNewFile();
-            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
-            oos.writeObject(objectToSave);
-            oos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private Gson gson;
+    private KeyClass apiKey;
+
+    public DataUtils() {
+         gson = new Gson();
+    }
+
+    public void saveObjectToPath(Object objectToSave, Path pathToSaveTo){
+        try (FileWriter fileWriter = new FileWriter(pathToSaveTo.toFile())) {
+            gson.toJson(objectToSave, fileWriter);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
-    /**
-     * Loads an object saved using the saveObjectToPath method. Returns an object which can be
-     * casted, after checking to the expected Type.
-     *
-     * @param pathToLoadFrom The path in which the object file is located
-     * @return An object which has been loaded from the file, or null if the file does not exist
-     */
-    public static <T extends Object> T loadObjectFromPath(Path pathToLoadFrom) {
+    public <T extends Object> Object loadObjectFromPath(Path pathToLoadFrom) {
+        return null;
+    }
+
+    public String loadAPIKey(Path pathToLoadFrom){
+        System.out.println("got here");
+        apiKey = this.loadAPIClass(pathToLoadFrom);
+        System.out.println();
+        if (apiKey.getKeyValue() != null) {
+            return apiKey.getKeyValue();
+        }
+        return null;
+    }
+
+    private KeyClass loadAPIClass(Path pathToLoadFrom){
+        System.out.println("got here 2");
         try {
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(String.valueOf(pathToLoadFrom)));
-            T result = (T) ois.readObject();
-            ois.close();
-            return result;
-        } catch (IOException | ClassNotFoundException ex) {
+            JsonReader reader = new JsonReader(new FileReader(pathToLoadFrom.toFile()));
+            return gson.fromJson(reader, KeyClass.class);
+        } catch (FileNotFoundException e) {
+            System.out.println("got here 3");
+            e.printStackTrace();
             return null;
         }
     }

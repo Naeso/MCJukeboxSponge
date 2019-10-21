@@ -11,9 +11,12 @@ import net.mcjukebox.plugin.sponge.sockets.SocketHandler;
 import net.mcjukebox.plugin.sponge.utils.DataUtils;
 import net.mcjukebox.plugin.sponge.utils.MessageUtils;
 import net.mcjukebox.plugin.sponge.utils.TimeUtils;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
@@ -21,7 +24,10 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.plugin.PluginManager;
 import org.spongepowered.api.scheduler.Task;
+import org.spongepowered.api.text.Text;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
@@ -56,6 +62,9 @@ public class MCJukebox {
         return timeUtils;
     }
 
+    public Path getPrivateConfigDir() {
+        return privateConfigDir;
+    }
 
     public Logger getLogger() {
         return logger;
@@ -69,6 +78,7 @@ public class MCJukebox {
     private ShowManager showManager;
     private TimeUtils timeUtils;
     private Task.Builder taskBuilder = Task.builder();
+    private DataUtils dataUtils;
 
     @Inject
     public PluginManager pluginManager;
@@ -106,8 +116,18 @@ public class MCJukebox {
         logger.info("McJukebox for Sponge ready to go.");
     }
 
-    public Path getAPIKey(){
-        return DataUtils.loadObjectFromPath(privateConfigDir.resolve("api.key"));
+    public String getAPIKey(){
+        if (Files.exists(privateConfigDir.resolve("api.key"))){
+            return dataUtils.loadAPIKey(privateConfigDir.resolve("api.key"));
+        }
+        else{
+            logger.info("Api.key file dosen't exists !");
+            return null;
+        }
+    }
+
+    public Path getApiKeyPath(){
+        return privateConfigDir.resolve("api.key");
     }
 
     @Listener
@@ -115,5 +135,9 @@ public class MCJukebox {
         logger.info("McJukebox for Sponge is stopping...");
         socketHandler.disconnect();
         regionManager.save();
+    }
+
+    public DataUtils getDataUtils() {
+        return dataUtils;
     }
 }

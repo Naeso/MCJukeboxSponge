@@ -7,7 +7,9 @@ import net.mcjukebox.plugin.sponge.utils.DataUtils;
 import org.json.JSONException;
 import org.spongepowered.api.Sponge;
 
+import javax.xml.crypto.Data;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,6 +18,7 @@ import java.util.UUID;
 public class RegionManager{
 
     private JukeboxAPI api;
+    private DataUtils dataUtils;
     public HashMap<String, String> getRegions() {
         return regions;
     }
@@ -28,16 +31,17 @@ public class RegionManager{
     public RegionManager(MCJukebox instance){
         folder = instance.privateConfigDir;
         this.currentInstance = instance;
+        dataUtils = new DataUtils();
         api = new JukeboxAPI(instance);
         load();
     }
 
     private void load(){
-        regions = DataUtils.loadObjectFromPath(folder.resolve("/regions.data"));
+        regions = (HashMap<String, String>) dataUtils.loadObjectFromPath(folder.resolve("/regions.data"));
         if(regions == null) regions = new HashMap<>();
 
         // Import from the "shared.data" file we accidentally created
-        HashMap<String, String> sharedFile = DataUtils.loadObjectFromPath(folder.resolve("/shared.data"));
+        HashMap<String, String> sharedFile = (HashMap<String, String>) dataUtils.loadObjectFromPath(folder.resolve("/shared.data"));
         if (sharedFile != null) {
             currentInstance.logger.info("Running migration of shared.data regions...");
             for (String key : sharedFile.keySet()) regions.put(key, sharedFile.get(key));
@@ -47,7 +51,7 @@ public class RegionManager{
     }
 
     public void save(){
-        DataUtils.saveObjectToPath(regions, folder.resolve("/regions.data"));
+        dataUtils.saveObjectToPath(regions, folder.resolve("/regions.data"));
     }
 
     public void addRegion(String ID, String URL){
