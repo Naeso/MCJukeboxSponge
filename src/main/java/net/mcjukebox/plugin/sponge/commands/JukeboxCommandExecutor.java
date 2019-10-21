@@ -91,7 +91,7 @@ public class JukeboxCommandExecutor{
                 .child(helpCommand, "help")
                 .child(musicCommand, "music")
                 .child(soundCommand, "sound")
-                .child(regionCommand, "region")
+                //.child(regionCommand, "region")
                 .child(setKeyCommand, "setkey")
                 .child(stopCommand, "stop")
                 .child(showCommand, "show")

@@ -36,8 +36,14 @@ public class JukeboxCommand  implements CommandExecutor {
             return CommandResult.empty();
         }
         else{
-            URL(src);
-            return CommandResult.success();
+            if (src instanceof Player){
+                URL(src);
+                return CommandResult.success();
+            }
+            else{
+                currentInstance.logger.info("I don't think consoles have ears, do they ?");
+                return CommandResult.empty();
+            }
         }
     }
 

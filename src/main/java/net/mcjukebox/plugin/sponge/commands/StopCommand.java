@@ -46,27 +46,27 @@ public class StopCommand implements CommandExecutor {
 
         int fadeDuration = options.has("fadeDuration") ? options.getInt("fadeDuration") : -1;
         String channel = options.has("channel") ? options.getString("channel") : "default";
-        String selection = args.<String>getOne("selectionMusicAll").get();
-        String targetIndex = args.<String>getOne("userShow").get();
+        String selection = args.<String>getOne("MusicOrAll").get();
+        String targetIndex = args.<String>getOne("UserOrShow").get();
 
         // Stop music in a show
-        if (args.getOne("userShow").get().toString().startsWith("@") && selection.equalsIgnoreCase("all")) {
-            api.getShowManager().getShow(args.<String>getOne("userShow").get()).stopAll(fadeDuration);
+        if (args.getOne("UserOrShow").get().toString().startsWith("@") && selection.equalsIgnoreCase("all")) {
+            api.getShowManager().getShow(args.<String>getOne("UserOrShow").get()).stopAll(fadeDuration);
             return CommandResult.success();
         }
 
         // Stop everything in a show
-        if (args.getOne("userShow").get().toString().startsWith("@") && selection.equalsIgnoreCase("music")) {
-            api.getShowManager().getShow(args.<String>getOne("userShow").get()).stopMusic(fadeDuration);
+        if (args.getOne("UserOrShow").get().toString().startsWith("@") && selection.equalsIgnoreCase("music")) {
+            api.getShowManager().getShow(args.<String>getOne("UserOrShow").get()).stopMusic(fadeDuration);
             return CommandResult.success();
         }
 
         // We haven't encountered either show case, so assume a player is the target
-        Player target = Sponge.getServer().getPlayer(args.<String>getOne("userShow").get()).get();
+        Player target = Sponge.getServer().getPlayer(args.<String>getOne("UserOrShow").get()).get();
 
         if (target == null) {
             HashMap<String, String> findAndReplace = new HashMap<String, String>();
-            findAndReplace.put("user", args.<String>getOne("userShow").get());
+            findAndReplace.put("user", args.<String>getOne("UserOrShow").get());
             src.sendMessage(Text.builder(langManager.get("command.notOnline") + findAndReplace).build());
             return CommandResult.success();
         }

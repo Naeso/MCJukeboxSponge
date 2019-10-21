@@ -41,7 +41,7 @@ public class PlayCommand implements CommandExecutor {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        String url = args.<String>getOne("url").get();
+        String url = args.<String>getOne("URL").get();
         Media toPlay = new Media(type, url, currentInstance);
 
         if (args.hasAny("options")) {
@@ -59,14 +59,14 @@ public class PlayCommand implements CommandExecutor {
             }
         }
 
-        if (args.<String>getOne("usershow").get().startsWith("@")) {
+        if (args.<String>getOne("UserOrShow").get().startsWith("@")) {
             try {
-                api.getShowManager().getShow(args.getOne("userShow").get().toString()).play(toPlay);
+                api.getShowManager().getShow(args.getOne("UserOrShow").get().toString()).play(toPlay);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         } else {
-            Player player = Sponge.getServer().getPlayer(args.<String>getOne("usershow").get()).get();
+            Player player = Sponge.getServer().getPlayer(args.<String>getOne("UserOrShow").get()).get();
             if (player.isOnline()) {
                 try {
                     api.play(player, toPlay);
@@ -75,7 +75,7 @@ public class PlayCommand implements CommandExecutor {
                 }
             } else {
                 HashMap<String, String> findAndReplace = new HashMap<String, String>();
-                findAndReplace.put("user", args.<String>getOne("usershow").get());
+                findAndReplace.put("user", args.<String>getOne("UserOrShow").get());
                 try {
                     src.sendMessage(Text.builder(langManager.get("command.notOnline") + findAndReplace).build());
                 } catch (JSONException e) {
