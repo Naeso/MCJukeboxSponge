@@ -4,8 +4,11 @@ import net.mcjukebox.plugin.sponge.managers.LangManager;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 
 public class MessageUtils {
@@ -38,9 +41,13 @@ public class MessageUtils {
 	public static void sendURL(Player player, String token) {
 		String Url = langManager.get("user.openDomain") + "?token=" + token;
 
-		player.sendMessage(
-				Text.builder(langManager.get("user.openClient") + Url)
-						.color(TextColors.GOLD)
-						.build());
+		try {
+			player.sendMessage(
+					Text.builder(langManager.get("user.openClient"))
+							.color(TextColors.GOLD).append(Text.of(Url)).onClick(TextActions.openUrl(new URL(Url)))
+							.build());
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
 	}
 }

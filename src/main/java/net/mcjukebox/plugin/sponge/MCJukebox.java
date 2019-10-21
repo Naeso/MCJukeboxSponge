@@ -134,7 +134,7 @@ public class MCJukebox {
     public void onServerStop(GameStoppedServerEvent event){
         logger.info("McJukebox for Sponge is stopping...");
         socketHandler.disconnect();
-        regionManager.save();
+        //regionManager.save();
     }
 
     public DataUtils getDataUtils() {

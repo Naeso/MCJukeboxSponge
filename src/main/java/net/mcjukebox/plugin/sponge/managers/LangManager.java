@@ -49,19 +49,19 @@ public class LangManager {
 	 * Adds all default configuration values to the JSON Object.
 	 */
 	private void addDefaults() throws JSONException {
-		addDefault("region.registered", "&aRegion registered!");
-		addDefault("region.unregistered", "&aRegion unregistered!");
-		addDefault("region.notregistered", "&cThat region is not registered!");
+		addDefault("region.registered", "Region registered!");
+		addDefault("region.unregistered", "Region unregistered!");
+		addDefault("region.notregistered", "That region is not registered!");
 
-		addDefault("user.openLoading", "&aGenerating link...");
-		addDefault("user.openClient", "Click here to launch our custom music client.");
+		addDefault("user.openLoading", "Generating link...");
+		addDefault("user.openClient", "Click here to launch our custom music client. ");
 		addDefault("user.openHover", "Launch client");
 		addDefault("user.openDomain", "https://client.mcjukebox.net");
 
-		addDefault("event.clientConnect", "&aYou connected to our audio server!");
-		addDefault("event.clientDisconnect", "&cYou disconnected from our audio server.");
+		addDefault("event.clientConnect", "You connected to our audio server!");
+		addDefault("event.clientDisconnect", "You disconnected from our audio server.");
 
-		addDefault("command.notOnline", "&c[user] is not currently online.");
+		addDefault("command.notOnline", "[user] is not currently online.");
 	}
 
 	/**
