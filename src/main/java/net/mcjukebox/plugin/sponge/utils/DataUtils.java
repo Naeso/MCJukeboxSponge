@@ -30,7 +30,7 @@ public class DataUtils {
 
     public String loadAPIKey(Path pathToLoadFrom){
         apiKey = this.loadAPIClass(pathToLoadFrom);
-        if (apiKey.getKeyValue() != null) {
+        if (apiKey != null) {
             return apiKey.getKeyValue();
         }
         return null;

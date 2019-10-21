@@ -8,6 +8,7 @@ import net.mcjukebox.plugin.sponge.managers.RegionManager;
 import net.mcjukebox.plugin.sponge.managers.shows.ShowManager;
 import net.mcjukebox.plugin.sponge.managers.shows.ShowSyncTask;
 import net.mcjukebox.plugin.sponge.sockets.SocketHandler;
+import net.mcjukebox.plugin.sponge.sockets.api.KeyClass;
 import net.mcjukebox.plugin.sponge.utils.DataUtils;
 import net.mcjukebox.plugin.sponge.utils.MessageUtils;
 import net.mcjukebox.plugin.sponge.utils.TimeUtils;
@@ -26,7 +27,10 @@ import org.spongepowered.api.plugin.PluginManager;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
@@ -83,6 +87,10 @@ public class MCJukebox {
     public PluginManager pluginManager;
 
     @Inject
+    @DefaultConfig(sharedRoot = false)
+    public Path defaultConfig;
+
+    @Inject
     @ConfigDir(sharedRoot = false)
     public Path privateConfigDir;
 
@@ -121,8 +129,9 @@ public class MCJukebox {
             return dataUtils.loadAPIKey(privateConfigDir.resolve("api.key"));
         }
         else{
-            logger.info("Api.key file dosen't exists !");
-            return null;
+            logger.info("Api.key file dosen't exists ! Creating one...");
+            dataUtils.saveObjectToPath(new KeyClass(""), privateConfigDir.resolve("api.key"));
+            return "";
         }
     }
 
@@ -135,9 +144,5 @@ public class MCJukebox {
         logger.info("McJukebox for Sponge is stopping...");
         socketHandler.disconnect();
         //regionManager.save();
-    }
-
-    public DataUtils getDataUtils() {
-        return dataUtils;
     }
 }

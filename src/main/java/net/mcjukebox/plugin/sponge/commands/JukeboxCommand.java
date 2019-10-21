@@ -30,7 +30,7 @@ public class JukeboxCommand  implements CommandExecutor {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         // Warn user an API key is needed, unless they have one or are attempting to add one
-        if (currentInstance.getAPIKey() == null) {
+        if (currentInstance.getAPIKey().isEmpty()) {
             src.sendMessage(Text.builder("No API Key set. Type /jukebox setkey <apikey>.").color(TextColors.DARK_RED).build());
             src.sendMessage(Text.builder("You can get this key from https://www.mcjukebox.net/admin").color(TextColors.DARK_RED).build());
             return CommandResult.empty();

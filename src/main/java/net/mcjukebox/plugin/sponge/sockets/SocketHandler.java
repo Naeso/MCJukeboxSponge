@@ -68,7 +68,7 @@ public class SocketHandler {
 
 	public void attemptConnection() {
 		try {
-			if(currentInstance.getAPIKey() == null) {
+			if(currentInstance.getAPIKey().isEmpty()) {
 				currentInstance.logger.error("No API key set - ignoring attempt to connect.");
 				return;
 			}
@@ -99,7 +99,7 @@ public class SocketHandler {
 		//Event and data listeners
 		server.on("drop", dropListener);
 		server.on("event/clientConnect", new ClientConnectListener(currentInstance));
-		server.on("event/clientDisconnect", new ClientDisconnectListener());
+		server.on("event/clientDisconnect", new ClientDisconnectListener(currentInstance));
 		server.on("data/lang", new LangListener(currentInstance));
 		server.on("data/token", tokenListener);
 	}

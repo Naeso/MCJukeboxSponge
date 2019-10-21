@@ -18,7 +18,6 @@ public class MessageUtils {
 	}
 
 	private static LangManager langManager;
-	private Player player;
 
 	public static void sendMessage(CommandSource player, String key){
 		sendMessage(player, key, null);
