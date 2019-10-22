@@ -4,6 +4,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.service.sql.SqlService;
 
 import javax.sql.DataSource;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,8 +27,8 @@ public class DatabaseUtils {
         try (Connection conn = getDataSource().getConnection()) {
             PreparedStatement tableRegion = conn.prepareStatement(
                     "CREATE TABLE IF NOT EXISTS Region (" +
-                    "RegionID Varchar(50) NOT NULL PRIMARY KEY," +
-                    "URL Text NOT NULL)");
+                            "RegionID Varchar(100) NOT NULL PRIMARY KEY," +
+                            "URL Varchar(300) NOT NULL)");
             tableRegion.execute();
         } catch (SQLException e){
             e.printStackTrace();
@@ -40,16 +41,22 @@ public class DatabaseUtils {
                     "SELECT RegionID FROM Region WHERE RegionID=?");
             tryRegion.setObject(1, IDRegion);
             ResultSet resultSet = tryRegion.executeQuery();
-            if (resultSet.wasNull()){
-                return false;
-            }
-            else {
+            if (resultSet.next()){
+                if(resultSet.wasNull()){
+                    resultSet.close();
+                    conn.close();
+                    return false;
+                }
+                resultSet.close();
+                conn.close();
                 return true;
             }
         } catch (SQLException e){
             e.printStackTrace();
+
             return false;
         }
+        return false;
     }
 
     public String getURLRegion(String IDRegion){
@@ -57,22 +64,23 @@ public class DatabaseUtils {
             try (Connection conn = getDataSource().getConnection()) {
                 PreparedStatement tryRegion = conn.prepareStatement(
                         "SELECT URL FROM Region WHERE RegionID=?");
-                tryRegion.setObject(1, IDRegion);
+                tryRegion.setString(1, IDRegion);
                 ResultSet resultSet = tryRegion.executeQuery();
                 if (resultSet.next()){
-                    return resultSet.getObject("URL").toString();
+                    String url = resultSet.getString("URL");
+                    resultSet.close();
+                    conn.close();
+                    return url;
                 }
             } catch (SQLException e){
                 e.printStackTrace();
             }
         }
-        else {
-            return "";
-        }
         return "";
     }
 
     public void setNewRegion(String IDRegion, String URLRegion){
+        System.out.println("Searching for ID: " + IDRegion + " URL : " + URLRegion);
         try (Connection conn = getDataSource().getConnection()) {
             PreparedStatement tryRegion = conn.prepareStatement(
                     "INSERT INTO Region(RegionID, URL) VALUES (?, ?)");
@@ -85,12 +93,24 @@ public class DatabaseUtils {
     }
 
     public void updateURLRegion(String IDRegion, String URLRegion){
+        System.out.println("Searching for ID: " + IDRegion + " URL : " + URLRegion);
         try (Connection conn = getDataSource().getConnection()) {
             PreparedStatement tryRegion = conn.prepareStatement(
                     "UPDATE Region SET URL=? WHERE RegionID=?");
             tryRegion.setObject(1, URLRegion);
             tryRegion.setObject(2, IDRegion);
             tryRegion.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteRegion(String IDRegion){
+        try (Connection conn = getDataSource().getConnection()) {
+            PreparedStatement tryRegion = conn.prepareStatement(
+                    "DELETE FROM Region WHERE RegionID=?");
+            tryRegion.setObject(1, IDRegion);
+            tryRegion.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
         }

@@ -7,6 +7,7 @@ import net.mcjukebox.plugin.sponge.utils.DataUtils;
 import net.mcjukebox.shared.utils.DatabaseUtils;
 import org.json.JSONException;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
 
 import javax.xml.crypto.Data;
 import java.io.File;
@@ -31,6 +32,7 @@ public class RegionManager{
         folder = instance.privateConfigDir;
         this.currentInstance = instance;
         dataUtils = new DataUtils();
+        databaseUtils = new DatabaseUtils();
         api = new JukeboxAPI(instance);
     }
 
@@ -43,27 +45,30 @@ public class RegionManager{
         }
     }
 
+    public void updateRegion(String ID, String URL){
+        if (databaseUtils.doesIDRegionExistsInDatabase(ID)){
+            databaseUtils.updateURLRegion(ID, URL);
+        }else{
+            currentInstance.logger.info("This region dosen't exists !");
+        }
+    }
+
     public void removeRegion(String ID) throws JSONException {
-        ShowManager showManager = currentInstance.getShowManager();
+        /*ShowManager showManager = currentInstance.getShowManager();*/
         HashMap<UUID, UUID> playersInRegion = currentInstance.getRegionListener().getPlayerInRegion();
 
-        Iterator<UUID> keys = playersInRegion.keySet().iterator();
-
-        while (keys.hasNext()) {
-            UUID uuid = keys.next();
-            UUID regionID = playersInRegion.get(uuid);
-
-            if (regionID.equals(ID)) {
-                if (regions.get(ID).charAt(0) == '@') {
-                    showManager.getShow(regions.get(ID)).removeMember(Sponge.getServer().getPlayer(uuid).get());
-                } else {
-                    api.stopMusic(Sponge.getServer().getPlayer(uuid).get());
-                    keys.remove();
+        if (databaseUtils.doesIDRegionExistsInDatabase(ID)){
+            databaseUtils.deleteRegion(ID);
+            for (Player player : Sponge.getServer().getOnlinePlayers()) {
+                if(playersInRegion.containsKey(player.getPlayer().get().getUniqueId()) &&
+                        playersInRegion.get(player.getPlayer().get().getUniqueId()).equals(ID)){
+                    playersInRegion.remove(player.getPlayer().get().getUniqueId());
+                    api.stopMusic(player.getPlayer().get());
                 }
             }
+        }else{
+            currentInstance.logger.info("This region dosen't exists !");
         }
-
-        regions.remove(ID);
     }
 
     public boolean hasRegion(String ID){

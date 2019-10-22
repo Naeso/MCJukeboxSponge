@@ -27,7 +27,8 @@ public class RegionListener{
 
     private MCJukebox currentInstance;
     private JukeboxAPI api;
-
+    private LocalRegion currentRegion;
+    private UUID currentRegionId;
     private RegionManager utils;
     public HashMap<UUID, UUID> getPlayerInRegion() {
         return playerInRegion;
@@ -93,31 +94,18 @@ public class RegionListener{
         if(!(player.getLocation().getY() != player.getLocation().getX() || player.getLocation().getZ() != player.getLocation().getZ())) return;
 
         if(currentInstance.doesUniverseGuardIsPresent()){
-            if (RegionUtils.getLocalRegion(player.getLocation()).getId() == null) {
-                return ;
-            }
-            else{
-                LocalRegion currentRegion = RegionUtils.getLocalRegion(player.getLocation());
-                UUID currentRegionId = currentRegion.getId();
-                ShowManager showManager = currentInstance.getShowManager();
-
-                //In this case, there are no applicable shared so we need go no further
-                if(currentRegionId == null){
-                    if(playerInRegion.containsKey(player.getPlayer().get().getUniqueId())){
-                        String lastShow = utils.getURL(playerInRegion.get(player.getPlayer().get().getUniqueId()));
-                        playerInRegion.remove(player.getPlayer().get().getUniqueId());
-
-                        if (lastShow == null || lastShow.toCharArray()[0] != '@') {
-                            //Region no longer exists, stop the music.
-                            api.stopMusic(player.getPlayer().get());
-                            return;
-                        } else if(lastShow.toCharArray()[0] == '@') {
-                            showManager.getShow(lastShow).removeMember(player.getPlayer().get());
-                            return;
-                        }
-                    }
+            if (RegionUtils.getLocalRegion(player.getLocation()) == null) {
+                if(playerInRegion.containsKey(player.getPlayer().get().getUniqueId()) &&
+                        playerInRegion.get(player.getPlayer().get().getUniqueId()).equals(currentRegionId)){
+                    playerInRegion.remove(player.getPlayer().get().getUniqueId());
+                    api.stopMusic(player.getPlayer().get());
                     return;
                 }
+            }
+            else{
+                currentRegion = RegionUtils.getLocalRegion(player.getLocation());
+                currentRegionId = currentRegion.getId();
+                ShowManager showManager = currentInstance.getShowManager();
 
                 if(playerInRegion.containsKey(player.getPlayer().get().getUniqueId()) &&
                         playerInRegion.get(player.getPlayer().get().getUniqueId()).equals(currentRegionId)) return;
@@ -130,11 +118,11 @@ public class RegionListener{
                     return;
                 }
 
-                if(playerInRegion.containsKey(player.getPlayer().get().getUniqueId())) {
+                /*if(playerInRegion.containsKey(player.getPlayer().get().getUniqueId())) {
                     String lastShow = utils.getURL(playerInRegion.get(player.getPlayer().get().getUniqueId()));
                     if(lastShow.toCharArray()[0] == '@') {
                         showManager.getShow(lastShow).removeMember(player.getPlayer().get());
-                    }
+
                 }
 
                 if(utils.getURL(currentRegionId).toCharArray()[0] == '@') {
@@ -142,13 +130,12 @@ public class RegionListener{
                     showManager.getShow(utils.getURL(currentRegionId)).addMember(player.getPlayer().get(), true);
                     playerInRegion.put(player.getPlayer().get().getUniqueId(), currentRegionId);
                     return;
-                }
+                }}*/
 
                 Media media = new Media(ResourceType.MUSIC, utils.getURL(currentRegionId), currentInstance);
                 api.play(player.getPlayer().get(), media);
                 playerInRegion.put(player.getPlayer().get().getUniqueId(), currentRegionId);
             }
         }
-
     }
 }

@@ -26,8 +26,8 @@ public class RegionCommand implements CommandExecutor {
         // region add <id> <url>
         if(args.getOne("AddRemoveUpdateList").get().equals("add")){
             if (args.hasAny("idRegion")){
-                if (args.hasAny("urlMusic")){
-                    currentInstance.getRegionManager().addRegion(args.getOne("idRegion").get().toString(), args.getOne("urlMusic").get().toString());
+                if (args.hasAny("URL")){
+                    currentInstance.getRegionManager().addRegion(args.<String>getOne("idRegion").get(), args.<String>getOne("URL").get());
                     MessageUtils.sendMessage(src, "region.registered");
                     return CommandResult.success();
                 }
@@ -58,15 +58,12 @@ public class RegionCommand implements CommandExecutor {
         }
 
         if(args.getOne("AddRemoveUpdateList").get().equals("update")){
-            if(currentInstance.getRegionManager().hasRegion(args.getOne("idRegion").get().toString())){
+            if(currentInstance.getRegionManager().hasRegion(args.getOne("idRegion").get().toString())) {
                 try {
-                    currentInstance.getRegionManager().removeRegion(args.getOne("idRegion").get().toString());
+                    currentInstance.getRegionManager().updateRegion(args.<String>getOne("idRegion").get(), args.<String>getOne("URL").get());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                MessageUtils.sendMessage(src, "region.unregistered");
-            }else{
-                MessageUtils.sendMessage(src, "region.notregistered");
             }
             return CommandResult.success();
         }
