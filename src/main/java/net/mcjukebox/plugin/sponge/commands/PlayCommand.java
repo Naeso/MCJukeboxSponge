@@ -17,6 +17,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 public class PlayCommand implements CommandExecutor {
@@ -60,12 +61,24 @@ public class PlayCommand implements CommandExecutor {
         }
 
         if (args.<String>getOne("UserOrShow").get().startsWith("@")) {
-            try {
-                api.getShowManager().getShow(args.getOne("UserOrShow").get().toString()).play(toPlay);
-            } catch (JSONException e) {
-                e.printStackTrace();
+            if (args.<String>getOne("UserOrShow").get().matches("^@a$")) {
+                Collection<Player> player = Sponge.getServer().getOnlinePlayers();
+                for (Player user : player) {
+                    try {
+                        api.play(user, toPlay);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else{
+                try {
+                    api.getShowManager().getShow(args.getOne("UserOrShow").get().toString()).play(toPlay);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-        } else {
+        }
+        else {
             Player player = Sponge.getServer().getPlayer(args.<String>getOne("UserOrShow").get()).get();
             if (player.isOnline()) {
                 try {

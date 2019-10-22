@@ -4,6 +4,7 @@ import net.mcjukebox.plugin.sponge.MCJukebox;
 import net.mcjukebox.plugin.sponge.api.JukeboxAPI;
 import net.mcjukebox.plugin.sponge.managers.shows.ShowManager;
 import net.mcjukebox.plugin.sponge.utils.DataUtils;
+import net.mcjukebox.shared.utils.DatabaseUtils;
 import org.json.JSONException;
 import org.spongepowered.api.Sponge;
 
@@ -19,9 +20,7 @@ public class RegionManager{
 
     private JukeboxAPI api;
     private DataUtils dataUtils;
-    public HashMap<String, String> getRegions() {
-        return regions;
-    }
+    private DatabaseUtils databaseUtils;
 
     private HashMap<String, String> regions;
     private Path folder;
@@ -33,40 +32,26 @@ public class RegionManager{
         this.currentInstance = instance;
         dataUtils = new DataUtils();
         api = new JukeboxAPI(instance);
-        //load();
     }
 
-    private void load(){
-        regions = (HashMap<String, String>) dataUtils.loadObjectFromPath(folder.resolve("/regions.data"));
-        if(regions == null) regions = new HashMap<>();
-
-        // Import from the "shared.data" file we accidentally created
-        HashMap<String, String> sharedFile = (HashMap<String, String>) dataUtils.loadObjectFromPath(folder.resolve("/shared.data"));
-        if (sharedFile != null) {
-            currentInstance.logger.info("Running migration of shared.data regions...");
-            for (String key : sharedFile.keySet()) regions.put(key, sharedFile.get(key));
-            new File(folder + "/shared.data").delete();
-            currentInstance.logger.info("Migration complete.");
+    public void addRegion(String ID, String URL)
+    {
+        if (!databaseUtils.doesIDRegionExistsInDatabase(ID)){
+            databaseUtils.setNewRegion(ID, URL);
+        }else{
+            currentInstance.logger.info("This region already exists !");
         }
-    }
-
-    public void save(){
-        dataUtils.saveObjectToPath(regions, folder.resolve("/regions.data"));
-    }
-
-    public void addRegion(String ID, String URL){
-        regions.put(ID.toLowerCase(), URL);
     }
 
     public void removeRegion(String ID) throws JSONException {
         ShowManager showManager = currentInstance.getShowManager();
-        HashMap<UUID, String> playersInRegion = currentInstance.getRegionListener().getPlayerInRegion();
+        HashMap<UUID, UUID> playersInRegion = currentInstance.getRegionListener().getPlayerInRegion();
 
         Iterator<UUID> keys = playersInRegion.keySet().iterator();
 
         while (keys.hasNext()) {
             UUID uuid = keys.next();
-            String regionID = playersInRegion.get(uuid);
+            UUID regionID = playersInRegion.get(uuid);
 
             if (regionID.equals(ID)) {
                 if (regions.get(ID).charAt(0) == '@') {
@@ -82,10 +67,10 @@ public class RegionManager{
     }
 
     public boolean hasRegion(String ID){
-        return regions.containsKey(ID);
+        return databaseUtils.doesIDRegionExistsInDatabase(ID);
     }
 
-    public String getURL(String ID){
-        return regions.get(ID);
+    public String getURL(UUID ID){
+        return databaseUtils.getURLRegion(ID.toString());
     }
 }

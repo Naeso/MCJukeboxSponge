@@ -24,10 +24,6 @@ public class DataUtils {
         }
     }
 
-    public <T extends Object> Object loadObjectFromPath(Path pathToLoadFrom) {
-        return null;
-    }
-
     public String loadAPIKey(Path pathToLoadFrom){
         apiKey = this.loadAPIClass(pathToLoadFrom);
         if (apiKey != null) {

@@ -51,7 +51,7 @@ public class JukeboxCommandExecutor{
                 .description(Text.of("region command"))
                 .executor(new RegionCommand(regionManager, currentInstance))
                 .arguments(
-                        GenericArguments.string(Text.of("addRemoveList")),
+                        GenericArguments.string(Text.of("AddRemoveUpdateList")),
                         GenericArguments.optionalWeak(GenericArguments.string(Text.of("idRegion"))),
                         GenericArguments.optionalWeak(GenericArguments.string(Text.of("URL")))
                 )
@@ -91,12 +91,11 @@ public class JukeboxCommandExecutor{
                 .child(helpCommand, "help")
                 .child(musicCommand, "music")
                 .child(soundCommand, "sound")
-                //.child(regionCommand, "region")
+                .child(regionCommand, "region")
                 .child(setKeyCommand, "setkey")
                 .child(stopCommand, "stop")
                 .child(showCommand, "show")
                 .build();
-
     }
 
     private void registerCommands(){

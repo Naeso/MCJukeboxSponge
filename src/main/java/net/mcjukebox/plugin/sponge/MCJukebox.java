@@ -12,6 +12,7 @@ import net.mcjukebox.plugin.sponge.sockets.api.KeyClass;
 import net.mcjukebox.plugin.sponge.utils.DataUtils;
 import net.mcjukebox.plugin.sponge.utils.MessageUtils;
 import net.mcjukebox.plugin.sponge.utils.TimeUtils;
+import net.mcjukebox.shared.utils.DatabaseUtils;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
@@ -21,16 +22,12 @@ import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
+import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.plugin.PluginManager;
 import org.spongepowered.api.scheduler.Task;
-import org.spongepowered.api.text.Text;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
@@ -82,6 +79,7 @@ public class MCJukebox {
     private TimeUtils timeUtils;
     private Task.Builder taskBuilder = Task.builder();
     private DataUtils dataUtils;
+    private DatabaseUtils databseUtils;
 
     @Inject
     public PluginManager pluginManager;
@@ -108,6 +106,9 @@ public class MCJukebox {
         regionManager = new RegionManager(this);
         showManager = new ShowManager(this);
         timeUtils = new TimeUtils(this);
+        databseUtils = new DatabaseUtils();
+
+        databseUtils.createDatabase();
 
         taskBuilder.async().execute(new ShowSyncTask()).delay(1, TimeUnit.SECONDS).submit(this);
 
@@ -143,6 +144,9 @@ public class MCJukebox {
     public void onServerStop(GameStoppedServerEvent event){
         logger.info("McJukebox for Sponge is stopping...");
         socketHandler.disconnect();
-        //regionManager.save();
+    }
+
+    public boolean doesUniverseGuardIsPresent(){
+        return this.pluginManager.getPlugin("universeguard").isPresent();
     }
 }

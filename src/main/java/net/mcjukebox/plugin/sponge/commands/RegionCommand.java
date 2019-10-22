@@ -24,7 +24,7 @@ public class RegionCommand implements CommandExecutor {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         // region add <id> <url>
-        if(args.getOne("addRemoveList").get().equals("add")){
+        if(args.getOne("AddRemoveUpdateList").get().equals("add")){
             if (args.hasAny("idRegion")){
                 if (args.hasAny("urlMusic")){
                     currentInstance.getRegionManager().addRegion(args.getOne("idRegion").get().toString(), args.getOne("urlMusic").get().toString());
@@ -43,7 +43,21 @@ public class RegionCommand implements CommandExecutor {
         }
 
         // region remove <id>
-        if(args.getOne("addRemoveList").get().equals("remove")){
+        if(args.getOne("AddRemoveUpdateList").get().equals("remove")){
+            if(currentInstance.getRegionManager().hasRegion(args.getOne("idRegion").get().toString())){
+                try {
+                    currentInstance.getRegionManager().removeRegion(args.getOne("idRegion").get().toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                MessageUtils.sendMessage(src, "region.unregistered");
+            }else{
+                MessageUtils.sendMessage(src, "region.notregistered");
+            }
+            return CommandResult.success();
+        }
+
+        if(args.getOne("AddRemoveUpdateList").get().equals("update")){
             if(currentInstance.getRegionManager().hasRegion(args.getOne("idRegion").get().toString())){
                 try {
                     currentInstance.getRegionManager().removeRegion(args.getOne("idRegion").get().toString());
@@ -58,7 +72,7 @@ public class RegionCommand implements CommandExecutor {
         }
 
         // region list
-        if(args.getOne("addRemoveList").get().equals("list")) {
+        /*if(args.getOne("AddRemoveUpdateList").get().equals("list")) {
             src.sendMessage(Text.builder("Registered Regions (" + regionManager.getRegions().size() + "):").color(TextColors.GREEN).build());
             for(String region : regionManager.getRegions().keySet()) {
                 src.sendMessage(Text.of(""));
@@ -70,7 +84,7 @@ public class RegionCommand implements CommandExecutor {
                 ).build());
             }
             return CommandResult.success();
-        }
+        }*/
         return CommandResult.empty();
     }
 }
