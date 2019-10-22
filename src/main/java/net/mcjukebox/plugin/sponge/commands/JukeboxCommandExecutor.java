@@ -80,8 +80,8 @@ public class JukeboxCommandExecutor{
                 .executor(new StopCommand(currentInstance))
                 .arguments(
                         GenericArguments.string(Text.of("UserOrShow")),
-                        GenericArguments.optional(GenericArguments.string(Text.of("MusicOrAll"))),
-                        GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("options")))
+                        GenericArguments.string(Text.of("MusicOrAll")),
+                        GenericArguments.optionalWeak(GenericArguments.remainingJoinedStrings(Text.of("options")))
                 )
                 .build();
 

@@ -25,5 +25,4 @@ public class RegionProvider implements net.mcjukebox.regionproviders.api.RegionP
 
         return regionList;
     }
-
 }

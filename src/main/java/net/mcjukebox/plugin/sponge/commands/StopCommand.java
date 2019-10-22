@@ -50,13 +50,15 @@ public class StopCommand implements CommandExecutor {
         String targetIndex = args.<String>getOne("UserOrShow").get();
 
         // Stop music in a show
-        if (args.getOne("UserOrShow").get().toString().startsWith("@") && selection.equalsIgnoreCase("all")) {
+        if (args.getOne("UserOrShow").get().toString().startsWith("@") &&
+                args.getOne("MusicOrAll").get().toString().equalsIgnoreCase("all")) {
             api.getShowManager().getShow(args.<String>getOne("UserOrShow").get()).stopAll(fadeDuration);
             return CommandResult.success();
         }
 
         // Stop everything in a show
-        if (args.getOne("UserOrShow").get().toString().startsWith("@") && selection.equalsIgnoreCase("music")) {
+        if (args.getOne("UserOrShow").get().toString().startsWith("@") &&
+                args.getOne("MusicOrAll").get().toString().equalsIgnoreCase("music")) {
             api.getShowManager().getShow(args.<String>getOne("UserOrShow").get()).stopMusic(fadeDuration);
             return CommandResult.success();
         }
@@ -64,21 +66,21 @@ public class StopCommand implements CommandExecutor {
         // We haven't encountered either show case, so assume a player is the target
         Player target = Sponge.getServer().getPlayer(args.<String>getOne("UserOrShow").get()).get();
 
-        if (target == null) {
+        if (!target.isOnline()) {
             HashMap<String, String> findAndReplace = new HashMap<String, String>();
             findAndReplace.put("user", args.<String>getOne("UserOrShow").get());
             src.sendMessage(Text.builder(langManager.get("command.notOnline") + findAndReplace).build());
-            return CommandResult.success();
+            return CommandResult.empty();
         }
 
         // Stop music for a particular player
-        if (selection.equalsIgnoreCase("all")) {
+        if (args.getOne("MusicOrAll").get().toString().equalsIgnoreCase("all")) {
             api.stopAll(target, channel, fadeDuration);
             return CommandResult.success();
         }
 
         // Stop everything for a particular player
-        if (selection.equalsIgnoreCase("music")) {
+        if (args.getOne("MusicOrAll").get().toString().equalsIgnoreCase("music")) {
             api.stopMusic(target, channel, fadeDuration);
             return CommandResult.success();
         }

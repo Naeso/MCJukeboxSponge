@@ -71,7 +71,6 @@ public class RegionCommand implements CommandExecutor {
             }
             return CommandResult.success();
         }
-
         return CommandResult.empty();
     }
 }
