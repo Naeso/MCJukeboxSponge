@@ -80,7 +80,6 @@ public class DatabaseUtils {
     }
 
     public void setNewRegion(String IDRegion, String URLRegion){
-        System.out.println("Searching for ID: " + IDRegion + " URL : " + URLRegion);
         try (Connection conn = getDataSource().getConnection()) {
             PreparedStatement tryRegion = conn.prepareStatement(
                     "INSERT INTO Region(RegionID, URL) VALUES (?, ?)");
@@ -93,7 +92,6 @@ public class DatabaseUtils {
     }
 
     public void updateURLRegion(String IDRegion, String URLRegion){
-        System.out.println("Searching for ID: " + IDRegion + " URL : " + URLRegion);
         try (Connection conn = getDataSource().getConnection()) {
             PreparedStatement tryRegion = conn.prepareStatement(
                     "UPDATE Region SET URL=? WHERE RegionID=?");

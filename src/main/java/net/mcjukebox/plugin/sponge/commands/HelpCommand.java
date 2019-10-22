@@ -12,18 +12,18 @@ public class HelpCommand implements CommandExecutor {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         src.sendMessage(Text.builder("Jukebox Commands :").color(TextColors.GREEN).build());
-        src.sendMessage(Text.builder("/jukebox music <username/@show> <url> {options}").build());
-        src.sendMessage(Text.builder("/jukebox sound <username/@show> <url> {options}").build());
-        src.sendMessage(Text.builder("/jukebox selmusic <selector> <url> {options}").build());
-        src.sendMessage(Text.builder("/jukebox selsound <selector> <url> {options}").build());
-        src.sendMessage(Text.builder("/jukebox stop <username/@show>").build());
-        src.sendMessage(Text.builder("/jukebox stop <username/@show> <music/all> {options}").build());
-        src.sendMessage(Text.builder("/jukebox region add <id> <url/@show>").build());
-        src.sendMessage(Text.builder("/jukebox region update <id> <url/@show>").build());
-        src.sendMessage(Text.builder("/jukebox region remove <id>").build());
-        src.sendMessage(Text.builder("/jukebox region list").build());
-        src.sendMessage(Text.builder("/jukebox show add/remove <username> <@show>").build());
-        src.sendMessage(Text.builder("/jukebox setkey <apikey>").build());
+        src.sendMessage(Text.of("/jukebox music <username/@show> <url> {options}"));
+        src.sendMessage(Text.of("/jukebox sound <username/@show> <url> {options}"));
+        src.sendMessage(Text.of("/jukebox selmusic <selector> <url> {options}"));
+        src.sendMessage(Text.of("/jukebox selsound <selector> <url> {options}"));
+        src.sendMessage(Text.of("/jukebox stop <username/@show>"));
+        src.sendMessage(Text.of("/jukebox stop <username/@show> <music/all> {options}"));
+        src.sendMessage(Text.of("/jukebox region add <id|'here'> <url/@show>"));
+        src.sendMessage(Text.of("/jukebox region update <id|'here'> <url/@show>"));
+        src.sendMessage(Text.of("/jukebox region remove <id|'here'>"));
+        src.sendMessage(Text.of("/jukebox region list"));
+        src.sendMessage(Text.of("/jukebox show add/remove <username> <@show>"));
+        src.sendMessage(Text.of("/jukebox setkey <apikey>"));
 
         return CommandResult.success();
     }
