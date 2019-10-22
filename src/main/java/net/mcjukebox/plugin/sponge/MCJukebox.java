@@ -113,7 +113,7 @@ public class MCJukebox {
         taskBuilder.async().execute(new ShowSyncTask()).delay(1, TimeUnit.SECONDS).submit(this);
 
         if(Sponge.getPluginManager().getPlugin("universeguard").isPresent()){
-            regionListener = new RegionListener(regionManager);
+            regionListener = new RegionListener(regionManager, this);
             Sponge.getEventManager().registerListeners(this, regionListener);
             logger.info("Universe Guard detected.");
         }

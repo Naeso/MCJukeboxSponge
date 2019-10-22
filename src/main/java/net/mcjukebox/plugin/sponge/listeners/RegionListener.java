@@ -29,20 +29,16 @@ public class RegionListener{
     private JukeboxAPI api;
 
     private RegionManager utils;
-
-    public RegionListener(MCJukebox instance) {
-        this.currentInstance = instance;
-        api = new JukeboxAPI(instance);
-    }
-
     public HashMap<UUID, UUID> getPlayerInRegion() {
         return playerInRegion;
     }
 
     private HashMap<UUID, UUID> playerInRegion = new HashMap<UUID, UUID>();
 
-    public RegionListener(RegionManager utils){
+    public RegionListener(RegionManager utils, MCJukebox instance){
         this.utils = utils;
+        this.currentInstance = instance;
+        api = new JukeboxAPI(instance);
     }
 
     @Listener
