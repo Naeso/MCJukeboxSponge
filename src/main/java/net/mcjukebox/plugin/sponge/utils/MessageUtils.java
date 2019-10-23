@@ -34,7 +34,7 @@ public class MessageUtils {
 			for (String find : findAndReplace.keySet()) message = message.replace("[" + find + "]", findAndReplace.get(find));
 		}
 
-		player.sendMessage(Text.of(message));
+		player.sendMessage(Text.builder(message).color(TextColors.GREEN).build());
 	}
 
 	public static void sendURL(Player player, String token) {

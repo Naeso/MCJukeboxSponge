@@ -24,7 +24,7 @@ public class JukeboxCommandExecutor{
     private void buildCommands(){
         CommandSpec helpCommand = CommandSpec.builder()
                 .description(Text.of("help command"))
-                .executor(new HelpCommand())
+                .executor(new HelpCommand(currentInstance))
                 .build();
 
         CommandSpec musicCommand = CommandSpec.builder()
@@ -85,17 +85,30 @@ public class JukeboxCommandExecutor{
                 )
                 .build();
 
-        mainCommandJukebox = CommandSpec.builder()
-                .description(Text.of("Main plugin command"))
-                .executor(new JukeboxCommand(currentInstance))
-                .child(helpCommand, "help")
-                .child(musicCommand, "music")
-                .child(soundCommand, "sound")
-                .child(regionCommand, "region")
-                .child(setKeyCommand, "setkey")
-                .child(stopCommand, "stop")
-                .child(showCommand, "show")
-                .build();
+        if(currentInstance.doesUniverseGuardIsPresent()){
+            mainCommandJukebox = CommandSpec.builder()
+                    .description(Text.of("Main plugin command"))
+                    .executor(new JukeboxCommand(currentInstance))
+                    .child(helpCommand, "help")
+                    .child(musicCommand, "music")
+                    .child(soundCommand, "sound")
+                    .child(regionCommand, "region")
+                    .child(setKeyCommand, "setkey")
+                    .child(stopCommand, "stop")
+                    .child(showCommand, "show")
+                    .build();
+        }else{
+            mainCommandJukebox = CommandSpec.builder()
+                    .description(Text.of("Main plugin command"))
+                    .executor(new JukeboxCommand(currentInstance))
+                    .child(helpCommand, "help")
+                    .child(musicCommand, "music")
+                    .child(soundCommand, "sound")
+                    .child(setKeyCommand, "setkey")
+                    .child(stopCommand, "stop")
+                    .child(showCommand, "show")
+                    .build();
+        }
     }
 
     private void registerCommands(){

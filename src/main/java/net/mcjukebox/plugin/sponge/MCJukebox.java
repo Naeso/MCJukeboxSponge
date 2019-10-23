@@ -116,12 +116,20 @@ public class MCJukebox {
             regionListener = new RegionListener(regionManager, this);
             Sponge.getEventManager().registerListeners(this, regionListener);
             logger.info("Universe Guard detected.");
+        }else{
+            logger.info("Universe Guard isn't present");
         }
 
-        logger.info("Universe Guard isn't present");
         JukeboxCommandExecutor jukeboxCommand = new JukeboxCommandExecutor(regionManager, this);
 
         logger.info("McJukebox for Sponge ready to go.");
+    }
+
+
+    @Listener
+    public void onServerStop(GameStoppedServerEvent event){
+        logger.info("McJukebox for Sponge is stopping...");
+        socketHandler.disconnect();
     }
 
     public String getAPIKey(){
@@ -138,12 +146,6 @@ public class MCJukebox {
 
     public Path getApiKeyPath(){
         return privateConfigDir.resolve("api.key");
-    }
-
-    @Listener
-    public void onServerStop(GameStoppedServerEvent event){
-        logger.info("McJukebox for Sponge is stopping...");
-        socketHandler.disconnect();
     }
 
     public boolean doesUniverseGuardIsPresent(){

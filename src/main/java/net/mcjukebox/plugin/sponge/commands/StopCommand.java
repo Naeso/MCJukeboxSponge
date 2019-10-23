@@ -17,6 +17,7 @@ import org.spongepowered.api.text.format.TextColors;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Optional;
 
 public class StopCommand implements CommandExecutor {
 
@@ -28,6 +29,7 @@ public class StopCommand implements CommandExecutor {
 
     private Collection<Player> allPlayers;
     private Player targetPlayer;
+    private Optional<Player> playerPresence;
     private String targetShow;
     private boolean isAShow;
     private boolean isTargetingAllPlayers;
@@ -45,14 +47,32 @@ public class StopCommand implements CommandExecutor {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        this.defineValuesForCommand(args);
+        if (args.<String>requireOne("UserOrShow").startsWith("@")) {
+            if (args.<String>requireOne("UserOrShow").matches("^@a$")) {
+                allPlayers = Sponge.getServer().getOnlinePlayers();
+                isTargetingAllPlayers = true;
+            }else{
+                targetShow = args.requireOne("UserOrShow");
+                isAShow = true;
+                isTargetingAllPlayers = false;
+            }
+        } else{
+            playerPresence = Sponge.getServer().getPlayer(args.<String>requireOne("UserOrShow"));
+            if (playerPresence.isPresent()) {
+                targetPlayer = playerPresence.get();
+                isAShow = false;
+                isTargetingAllPlayers = false;
+            }
+        }
+
+        selectionMusicOrAll = args.<String>getOne("MusicOrAll").orElse("music");
 
         if (args.hasAny("options")) {
             options = jsonFromArgs((String[])args.getAll("options").toArray(), 2);
             if (options == null) {
                 src.sendMessage(Text.builder("Unable to parse options as JSON.").color(TextColors.RED).build());
-                return CommandResult.empty();}
-
+                return CommandResult.empty();
+            }
         }
 
         fadeDuration = options.has("fadeDuration") ? options.getInt("fadeDuration") : -1;
@@ -86,7 +106,7 @@ public class StopCommand implements CommandExecutor {
                 }
             }
         }else{
-            if(targetPlayer.isOnline()){
+            if(playerPresence.isPresent()){
                 // Stop music for a particular player
                 if (selectionMusicOrAll.equalsIgnoreCase("all")) {
                     api.stopAll(targetPlayer, channel, fadeDuration);
@@ -100,12 +120,11 @@ public class StopCommand implements CommandExecutor {
                 }
             }else{
                 HashMap<String, String> findAndReplace = new HashMap<String, String>();
-                findAndReplace.put("user", targetPlayer.getName());
-                src.sendMessage(Text.of(langManager.get("command.notOnline") + findAndReplace));
+                findAndReplace.put("user", args.requireOne("UserOrShow"));
+                src.sendMessage(Text.builder(langManager.get("command.notOnline")).color(TextColors.RED).build());
                 return CommandResult.empty();
             }
         }
-
         return CommandResult.empty();
     }
 
@@ -117,29 +136,6 @@ public class StopCommand implements CommandExecutor {
             return new JSONObject(json.toString());
         }catch(Exception ex) {
             return null;
-        }
-    }
-
-    private void defineValuesForCommand(CommandContext args){
-        if (args.<String>getOne("UserOrShow").get().startsWith("@")) {
-            if (args.<String>getOne("UserOrShow").get().matches("^@a$")) {
-                allPlayers = Sponge.getServer().getOnlinePlayers();
-                isTargetingAllPlayers = true;
-            }else{
-                targetShow = args.<String>getOne("UserOrShow").get();
-                isAShow = true;
-                isTargetingAllPlayers = false;
-            }
-        }else{
-            targetPlayer = Sponge.getServer().getPlayer(args.<String>getOne("UserOrShow").get()).get();
-            isAShow = false;
-            isTargetingAllPlayers = false;
-        }
-
-        if(args.hasAny("MusicOrAll")){
-            selectionMusicOrAll = args.<String>getOne("MusicOrAll").get();
-        }else{
-            selectionMusicOrAll = "music";
         }
     }
 }

@@ -61,7 +61,7 @@ public class LangManager {
 		addDefault("event.clientConnect", "You connected to our audio server!");
 		addDefault("event.clientDisconnect", "You disconnected from our audio server.");
 
-		addDefault("command.notOnline", "[user] is not currently online.");
+		addDefault("command.notOnline", "This player is not currently online.");
 	}
 
 	/**

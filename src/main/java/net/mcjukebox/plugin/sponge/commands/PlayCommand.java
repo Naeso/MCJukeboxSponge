@@ -5,7 +5,6 @@ import net.mcjukebox.plugin.sponge.api.JukeboxAPI;
 import net.mcjukebox.plugin.sponge.api.ResourceType;
 import net.mcjukebox.plugin.sponge.api.models.Media;
 import net.mcjukebox.plugin.sponge.managers.LangManager;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
@@ -18,32 +17,34 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Optional;
 
 public class PlayCommand implements CommandExecutor {
 
     private JukeboxAPI api;
 
     private MCJukebox currentInstance;
-
+    private Optional<Player> playerPresence;
+    private String targetPlayersShow;
+    private Player targetPlayer;
+    private String url;
+    private Media toPlay;
     private ResourceType type;
 
     public PlayCommand(MCJukebox instance, ResourceType type) {
         this.currentInstance = instance;
+        langManager = new LangManager();
         api = new JukeboxAPI(instance);
         this.type = type;
     }
 
-    public static void setLangManager(LangManager langManager) {
-        PlayCommand.langManager = langManager;
-    }
-
-    private static LangManager langManager;
+    private LangManager langManager;
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        String url = args.<String>getOne("URL").get();
-        Media toPlay = new Media(type, url, currentInstance);
+        targetPlayersShow = args.requireOne("UserOrShow");
+        url = args.requireOne("URL");
+        toPlay = new Media(type, url, currentInstance);
 
         if (args.hasAny("options")) {
             JSONObject options = jsonFromArgs((String[])args.getAll("options").toArray(), 2);
@@ -53,51 +54,34 @@ public class PlayCommand implements CommandExecutor {
                 return CommandResult.empty();
             }
 
-            try {
-                toPlay.loadOptions(options);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            toPlay.loadOptions(options);
         }
 
-        if (args.<String>getOne("UserOrShow").get().startsWith("@")) {
-            if (args.<String>getOne("UserOrShow").get().matches("^@a$")) {
+        if (targetPlayersShow.startsWith("@")) {
+            if (targetPlayersShow.matches("^@a$")) {
                 Collection<Player> player = Sponge.getServer().getOnlinePlayers();
                 for (Player user : player) {
-                    try {
-                        api.play(user, toPlay);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    api.play(user, toPlay);
                 }
             } else{
-                try {
-                    api.getShowManager().getShow(args.getOne("UserOrShow").get().toString()).play(toPlay);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                api.getShowManager().getShow(targetPlayersShow).play(toPlay);
+                return CommandResult.success();
             }
         }
         else {
-            Player player = Sponge.getServer().getPlayer(args.<String>getOne("UserOrShow").get()).get();
-            if (player.isOnline()) {
-                try {
-                    api.play(player, toPlay);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                HashMap<String, String> findAndReplace = new HashMap<String, String>();
-                findAndReplace.put("user", args.<String>getOne("UserOrShow").get());
-                try {
-                    src.sendMessage(Text.builder(langManager.get("command.notOnline") + findAndReplace).build());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            playerPresence = Sponge.getServer().getPlayer(targetPlayersShow);
+            if (playerPresence.isPresent()) {
+                targetPlayer = playerPresence.get();
+                api.play(targetPlayer, toPlay);
+                return CommandResult.success();
+            }
+            else{
+                src.sendMessage(Text.builder(langManager.get("command.notOnline")).color(TextColors.RED).build());
+                return CommandResult.empty();
             }
         }
 
-        return CommandResult.success();
+        return CommandResult.empty();
     }
 
     private JSONObject jsonFromArgs(String[] args, int startPoint) {
