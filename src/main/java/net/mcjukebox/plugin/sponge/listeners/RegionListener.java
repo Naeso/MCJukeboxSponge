@@ -9,6 +9,7 @@ import net.mcjukebox.plugin.sponge.api.models.Media;
 import net.mcjukebox.plugin.sponge.managers.RegionManager;
 import net.mcjukebox.plugin.sponge.managers.shows.Show;
 import net.mcjukebox.plugin.sponge.managers.shows.ShowManager;
+import net.mcjukebox.shared.utils.DatabaseUtils;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.Listener;
@@ -26,6 +27,7 @@ public class RegionListener{
     private MCJukebox currentInstance;
     private JukeboxAPI api;
     private LocalRegion currentRegion;
+    private DatabaseUtils databaseUtils;
     private UUID currentRegionId;
     private RegionManager utils;
     public HashMap<UUID, UUID> getPlayerInRegion() {
@@ -38,6 +40,7 @@ public class RegionListener{
         this.utils = utils;
         this.currentInstance = instance;
         api = new JukeboxAPI(instance);
+        databaseUtils = new DatabaseUtils();
     }
 
     @Listener
@@ -99,6 +102,7 @@ public class RegionListener{
                     api.stopMusic(player.getPlayer().get());
                     return;
                 }
+                return;
             }
             else{
                 currentRegion = RegionUtils.getLocalRegion(player.getLocation());
@@ -106,7 +110,9 @@ public class RegionListener{
                 ShowManager showManager = currentInstance.getShowManager();
 
                 if(playerInRegion.containsKey(player.getPlayer().get().getUniqueId()) &&
-                        playerInRegion.get(player.getPlayer().get().getUniqueId()).equals(currentRegionId)) return;
+                        playerInRegion.get(player.getPlayer().get().getUniqueId()).equals(currentRegionId)){
+                    return;
+                }
 
                 if(playerInRegion.containsKey(player.getPlayer().get().getUniqueId()) &&
                         utils.getURL(playerInRegion.get(player.getPlayer().get().getUniqueId())).equals(
@@ -129,10 +135,11 @@ public class RegionListener{
                     playerInRegion.put(player.getPlayer().get().getUniqueId(), currentRegionId);
                     return;
                 }}*/
-
-                Media media = new Media(ResourceType.MUSIC, utils.getURL(currentRegionId), currentInstance);
-                api.play(player.getPlayer().get(), media);
-                playerInRegion.put(player.getPlayer().get().getUniqueId(), currentRegionId);
+                if (databaseUtils.doesIDRegionExistsInDatabase(currentRegionId.toString())) {
+                    Media media = new Media(ResourceType.MUSIC, utils.getURL(currentRegionId), currentInstance);
+                    api.play(player.getPlayer().get(), media);
+                    playerInRegion.put(player.getPlayer().get().getUniqueId(), currentRegionId);
+                }
             }
         }
     }

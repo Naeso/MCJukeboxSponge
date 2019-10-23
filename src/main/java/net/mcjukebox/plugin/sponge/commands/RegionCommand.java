@@ -3,9 +3,11 @@ package net.mcjukebox.plugin.sponge.commands;
 import com.universeguard.region.LocalRegion;
 import com.universeguard.utils.RegionUtils;
 import net.mcjukebox.plugin.sponge.MCJukebox;
+import net.mcjukebox.plugin.sponge.api.JukeboxAPI;
 import net.mcjukebox.plugin.sponge.managers.RegionManager;
 import net.mcjukebox.plugin.sponge.utils.MessageUtils;
 import org.json.JSONException;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -15,22 +17,34 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Optional;
 import java.util.UUID;
 
 public class RegionCommand implements CommandExecutor {
 
     private MCJukebox currentInstance;
+    private JukeboxAPI jukeboxAPI;
     private RegionManager regionManager;
     private LocalRegion currentRegion;
+    private String commandChoice;
+    private String idRegion;
+    private String UrlRegion;
+    private Optional<Player> playerPresence;
+
     public RegionCommand(RegionManager regionManager, MCJukebox instance) {
         this.currentInstance = instance;
         this.regionManager = regionManager;
+        this.jukeboxAPI = new JukeboxAPI(instance);
     }
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         // region add <id> <url>
-        if(args.getOne("AddRemoveUpdateList").get().equals("add")){
+        commandChoice = args.requireOne("AddRemoveUpdateList");
+
+        if(commandChoice.equals("add")){
             if (args.hasAny("idRegion")){
                 if (args.hasAny("URL")){
                     if (args.getOne("idRegion").get().equals("here") && (src instanceof Player)){
@@ -50,94 +64,83 @@ public class RegionCommand implements CommandExecutor {
                 }
             }
             else{
-                src.sendMessage(Text.of("You must provide ID of the region in order to add region."));
-                src.sendMessage(Text.of("You can also use the keyword 'here' instead of the id to select the current region you're in."));
+                errorCommandIdNotProvided(src);
                 return CommandResult.empty();
             }
         }
 
         // region remove <id>
-        if(args.getOne("AddRemoveUpdateList").get().equals("remove")){
+        if(commandChoice.equals("remove")){
             if (args.hasAny("idRegion")) {
                 if (args.getOne("idRegion").get().equals("here") && (src instanceof Player)){
                     UUID idRegion = RegionUtils.getLocalRegion(((Player) src).getLocation()).getId();
                     if (currentInstance.getRegionManager().hasRegion(idRegion.toString())) {
-                        try {
-                            currentInstance.getRegionManager().removeRegion(idRegion.toString());
-                            return CommandResult.success();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        currentInstance.getRegionManager().removeRegion(idRegion.toString());
                         MessageUtils.sendMessage(src, "region.unregistered");
+                        removeKeys(idRegion);
+                        return CommandResult.success();
                     }
-                    return CommandResult.success();
                 }else{
                     if (currentInstance.getRegionManager().hasRegion(args.getOne("idRegion").get().toString())) {
-                        try {
-                            currentInstance.getRegionManager().removeRegion(args.getOne("idRegion").get().toString());
-                            return CommandResult.success();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        currentInstance.getRegionManager().removeRegion(args.getOne("idRegion").get().toString());
                         MessageUtils.sendMessage(src, "region.unregistered");
+                        removeKeys(UUID.fromString(args.getOne("idRegion").get().toString()));
+                        return CommandResult.success();
                     }
                 }
             } else {
                 MessageUtils.sendMessage(src, "region.notregistered");
-                src.sendMessage(Text.of("You must provide ID of the region in order to add region."));
-                src.sendMessage(Text.of("You can also use the keyword 'here' instead of the id to select the current region you're in."));
+                errorCommandIdNotProvided(src);
                 return CommandResult.empty();
             }
 
             return CommandResult.empty();
         }
 
-        if(args.getOne("AddRemoveUpdateList").get().equals("update")) {
+        if(commandChoice.equals("update")) {
             if (args.hasAny("idRegion")) {
-                if (args.getOne("idRegion").get().equals("here") && (src instanceof Player)){
+                if (args.requireOne("idRegion").equals("here") && (src instanceof Player)){
                     UUID idRegion = RegionUtils.getLocalRegion(((Player) src).getLocation()).getId();
                     if (currentInstance.getRegionManager().hasRegion(idRegion.toString())) {
-                        try {
-                            currentInstance.getRegionManager().updateRegion(idRegion.toString(), args.<String>getOne("URL").get());
-                            return CommandResult.success();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            return CommandResult.empty();
-                        }
+                        currentInstance.getRegionManager().updateRegion(idRegion.toString(), args.requireOne("URL"));
+                        return CommandResult.success();
                     }
                 }else {
-                    if (currentInstance.getRegionManager().hasRegion(args.getOne("idRegion").get().toString())) {
-                        try {
-                            currentInstance.getRegionManager().updateRegion(args.<String>getOne("idRegion").get(), args.<String>getOne("URL").get());
-                            return CommandResult.success();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            return CommandResult.empty();
-                        }
+                    if (currentInstance.getRegionManager().hasRegion(args.requireOne("idRegion").toString())) {
+                        currentInstance.getRegionManager().updateRegion(args.requireOne("idRegion"), args.requireOne("URL"));
+                        return CommandResult.success();
                     }
                 }
             } else {
-                src.sendMessage(Text.of("You must provide ID of the region in order to add region."));
-                src.sendMessage(Text.of("You can also use the keyword 'here' instead of the id to select the current region you're in."));
+                errorCommandIdNotProvided(src);
                 return CommandResult.empty();
             }
             return CommandResult.empty();
         }
-
-        // region list
-        /*if(args.getOne("AddRemoveUpdateList").get().equals("list")) {
-            src.sendMessage(Text.builder("Registered Regions (" + regionManager.getRegions().size() + "):").color(TextColors.GREEN).build());
-            for(String region : regionManager.getRegions().keySet()) {
-                src.sendMessage(Text.of(""));
-                src.sendMessage(Text.builder("Name:").color(TextColors.GOLD).append(
-                        Text.of(region)
-                ).build());
-                src.sendMessage(Text.builder("URL/Show:").color(TextColors.GOLD).append(
-                        Text.of(regionManager.getRegions().get(region))
-                ).build());
-            }
-            return CommandResult.success();
-        }*/
         return CommandResult.empty();
+    }
+
+    private void errorCommandIdNotProvided(CommandSource src){
+        src.sendMessage(Text.builder("You must provide ID of the region in order to add region.").color(TextColors.RED).build());
+        src.sendMessage(Text.builder("You can also use the keyword 'here' instead of the id to select the current region you're in.").color(TextColors.RED).build());
+    }
+
+    private void removeKeys(UUID idRegion){
+        HashMap<UUID, UUID> playersInRegion = currentInstance.getRegionListener().getPlayerInRegion();
+
+        Iterator<UUID> keys = playersInRegion.keySet().iterator();
+
+        while (keys.hasNext()) {
+            UUID uuid = keys.next();
+            UUID regionID = playersInRegion.get(uuid);
+
+            if (regionID.equals(idRegion)) {
+                playerPresence = Sponge.getServer().getPlayer(uuid);
+                if (playerPresence.isPresent()) {
+                    jukeboxAPI.stopMusic(Sponge.getServer().getPlayer(uuid).get());
+                    keys.remove();
+                }
+            }
+        }
     }
 }
