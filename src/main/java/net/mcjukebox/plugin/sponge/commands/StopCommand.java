@@ -58,15 +58,6 @@ public class StopCommand implements CommandExecutor {
         fadeDuration = options.has("fadeDuration") ? options.getInt("fadeDuration") : -1;
         channel = options.has("channel") ? options.getString("channel") : "default";
 
-        //If the player is not online, command fails;
-        if(targetPlayer.isOnline()){
-            HashMap<String, String> findAndReplace = new HashMap<String, String>();
-            findAndReplace.put("user", targetPlayer.getName());
-            src.sendMessage(Text.of(langManager.get("command.notOnline") + findAndReplace));
-            return CommandResult.empty();
-        }
-
-
         if(isAShow){
             // Stop everything in a show
             if (selectionMusicOrAll.equalsIgnoreCase("all")) {
@@ -95,16 +86,23 @@ public class StopCommand implements CommandExecutor {
                 }
             }
         }else{
-            // Stop music for a particular player
-            if (selectionMusicOrAll.equalsIgnoreCase("all")) {
-                api.stopAll(targetPlayer, channel, fadeDuration);
-                return CommandResult.success();
-            }
+            if(targetPlayer.isOnline()){
+                // Stop music for a particular player
+                if (selectionMusicOrAll.equalsIgnoreCase("all")) {
+                    api.stopAll(targetPlayer, channel, fadeDuration);
+                    return CommandResult.success();
+                }
 
-            // Stop everything for a particular player
-            if (selectionMusicOrAll.equalsIgnoreCase("music")) {
-                api.stopMusic(targetPlayer, channel, fadeDuration);
-                return CommandResult.success();
+                // Stop everything for a particular player
+                if (selectionMusicOrAll.equalsIgnoreCase("music")) {
+                    api.stopMusic(targetPlayer, channel, fadeDuration);
+                    return CommandResult.success();
+                }
+            }else{
+                HashMap<String, String> findAndReplace = new HashMap<String, String>();
+                findAndReplace.put("user", targetPlayer.getName());
+                src.sendMessage(Text.of(langManager.get("command.notOnline") + findAndReplace));
+                return CommandResult.empty();
             }
         }
 
@@ -130,6 +128,7 @@ public class StopCommand implements CommandExecutor {
             }else{
                 targetShow = args.<String>getOne("UserOrShow").get();
                 isAShow = true;
+                isTargetingAllPlayers = false;
             }
         }else{
             targetPlayer = Sponge.getServer().getPlayer(args.<String>getOne("UserOrShow").get()).get();
