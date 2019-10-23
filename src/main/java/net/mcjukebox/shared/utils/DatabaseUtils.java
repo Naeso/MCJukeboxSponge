@@ -33,6 +33,16 @@ public class DatabaseUtils {
         } catch (SQLException e){
             e.printStackTrace();
         }
+
+        try (Connection conn = getDataSource().getConnection()) {
+            PreparedStatement tableRegion = conn.prepareStatement(
+                    "CREATE TABLE IF NOT EXISTS Biomes (" +
+                            "BiomesID Varchar(100) NOT NULL PRIMARY KEY," +
+                            "URL Varchar(300) NOT NULL)");
+            tableRegion.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
     public boolean doesIDRegionExistsInDatabase(String IDRegion){

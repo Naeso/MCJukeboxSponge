@@ -2,6 +2,8 @@ package net.mcjukebox.plugin.sponge.managers;
 
 import net.mcjukebox.plugin.sponge.MCJukebox;
 import net.mcjukebox.plugin.sponge.api.JukeboxAPI;
+import net.mcjukebox.plugin.sponge.api.ResourceType;
+import net.mcjukebox.plugin.sponge.api.models.Media;
 import net.mcjukebox.plugin.sponge.managers.shows.ShowManager;
 import net.mcjukebox.plugin.sponge.utils.DataUtils;
 import net.mcjukebox.shared.utils.DatabaseUtils;
@@ -46,8 +48,19 @@ public class RegionManager{
     }
 
     public void updateRegion(String ID, String URL){
+        HashMap<UUID, UUID> playerInRegion = currentInstance.getRegionListener().getPlayerInRegion();
+
         if (databaseUtils.doesIDRegionExistsInDatabase(ID)){
             databaseUtils.updateURLRegion(ID, URL);
+            for (Player player : Sponge.getServer().getOnlinePlayers()) {
+                if(playerInRegion.containsKey(player.getPlayer().get().getUniqueId()) &&
+                        playerInRegion.get(player.getPlayer().get().getUniqueId()).equals(UUID.fromString(ID))) {
+                    playerInRegion.remove(player.getPlayer().get().getUniqueId());
+                    api.stopMusic(player.getPlayer().get());
+                    Media media = new Media(ResourceType.MUSIC, getURL(UUID.fromString(ID)), currentInstance);
+                    api.play(player, media);
+                }
+            }
         }else{
             currentInstance.logger.info("This region dosen't exists !");
         }
@@ -55,19 +68,19 @@ public class RegionManager{
 
     public void removeRegion(String ID) throws JSONException {
         /*ShowManager showManager = currentInstance.getShowManager();*/
-        HashMap<UUID, UUID> playersInRegion = currentInstance.getRegionListener().getPlayerInRegion();
+        HashMap<UUID, UUID> playerInRegion = currentInstance.getRegionListener().getPlayerInRegion();
 
         if (databaseUtils.doesIDRegionExistsInDatabase(ID)){
             databaseUtils.deleteRegion(ID);
             for (Player player : Sponge.getServer().getOnlinePlayers()) {
-                if(playersInRegion.containsKey(player.getPlayer().get().getUniqueId()) &&
-                        playersInRegion.get(player.getPlayer().get().getUniqueId()).equals(ID)){
-                    playersInRegion.remove(player.getPlayer().get().getUniqueId());
+                if(playerInRegion.containsKey(player.getPlayer().get().getUniqueId()) &&
+                        playerInRegion.get(player.getPlayer().get().getUniqueId()).equals(UUID.fromString(ID))) {
+                    playerInRegion.remove(player.getPlayer().get().getUniqueId());
                     api.stopMusic(player.getPlayer().get());
                 }
             }
         }else{
-            currentInstance.logger.info("This region dosen't exists !");
+            currentInstance.logger.info("This region dosen't exist !");
         }
     }
 

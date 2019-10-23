@@ -12,12 +12,10 @@ public class HelpCommand implements CommandExecutor {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         src.sendMessage(Text.builder("Jukebox Commands :").color(TextColors.GREEN).build());
-        src.sendMessage(Text.of("/jukebox music <username/@show> <url> {options}"));
-        src.sendMessage(Text.of("/jukebox sound <username/@show> <url> {options}"));
-        src.sendMessage(Text.of("/jukebox selmusic <selector> <url> {options}"));
-        src.sendMessage(Text.of("/jukebox selsound <selector> <url> {options}"));
-        src.sendMessage(Text.of("/jukebox stop <username/@show>"));
-        src.sendMessage(Text.of("/jukebox stop <username/@show> <music/all> {options}"));
+        src.sendMessage(Text.of("/jukebox music <username/@show/@a> <url> {options}"));
+        src.sendMessage(Text.of("/jukebox sound <username/@show/@a> <url> {options}"));
+        src.sendMessage(Text.of("/jukebox stop <username/@show/@a>"));
+        src.sendMessage(Text.of("/jukebox stop <username/@show/@a> <music/all> {options}"));
         src.sendMessage(Text.of("/jukebox region add <id|'here'> <url/@show>"));
         src.sendMessage(Text.of("/jukebox region update <id|'here'> <url/@show>"));
         src.sendMessage(Text.of("/jukebox region remove <id|'here'>"));

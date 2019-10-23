@@ -9,7 +9,6 @@ import net.mcjukebox.plugin.sponge.api.models.Media;
 import net.mcjukebox.plugin.sponge.managers.RegionManager;
 import net.mcjukebox.plugin.sponge.managers.shows.Show;
 import net.mcjukebox.plugin.sponge.managers.shows.ShowManager;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.Listener;
@@ -17,7 +16,6 @@ import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Disconnect;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Join;
-import com.universeguard.region.LocalRegion;
 import com.universeguard.utils.RegionUtils;
 
 import java.util.HashMap;
