@@ -137,10 +137,10 @@ public class StopCommand implements CommandExecutor {
             isTargetingAllPlayers = false;
         }
 
-        if(!args.hasAny("MusicOrAll")){
-            selectionMusicOrAll = "music";
-        }else{
+        if(args.hasAny("MusicOrAll")){
             selectionMusicOrAll = args.<String>getOne("MusicOrAll").get();
+        }else{
+            selectionMusicOrAll = "music";
         }
     }
 }
