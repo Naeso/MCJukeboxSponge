@@ -11,11 +11,13 @@ import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.event.cause.EventContextKeys;
 
+import java.util.Optional;
+
 public class ClientDisconnectListener implements Emitter.Listener {
 
 	private MCJukebox currentInstance;
 	private JSONObject data;
-	private Player user;
+	private Optional<Player> playerPresence;
 	private Cause cause;
 
 	public ClientDisconnectListener(MCJukebox instance) {
@@ -25,23 +27,24 @@ public class ClientDisconnectListener implements Emitter.Listener {
 	@Override
 	public void call(Object... objects) {
 		data = (JSONObject) objects[0];
-		user = Sponge.getGame().getServer().getPlayer(data.getString("username")).get();
-		this.buildCause();
-		ClientDisconnectEvent event = new ClientDisconnectEvent(
-				data.getString("username"), data.getLong("timestamp"), cause);
-		Sponge.getEventManager().post(event);
+		playerPresence = Sponge.getServer().getPlayer(data.getString("username"));
+		if (playerPresence.isPresent()) {
+			this.buildCause();
+			ClientDisconnectEvent event = new ClientDisconnectEvent(
+					data.getString("username"), data.getLong("timestamp"), cause);
+			Sponge.getEventManager().post(event);
 
-		if(!Sponge.getGame().getServer().getPlayer(data.getString("username")).isPresent()) return;
-		MessageUtils.sendMessage(user, "event.clientDisconnect");
+			MessageUtils.sendMessage(playerPresence.get(), "event.clientDisconnect");
+		}
 	}
 
 	private void buildCause(){
 		EventContext context = EventContext.builder()
-				.add(EventContextKeys.PLAYER_SIMULATED, user.getProfile())
+				.add(EventContextKeys.PLAYER_SIMULATED, playerPresence.get().getProfile())
 				.build();
 
 		cause = Cause.builder()
-				.append(user)
+				.append(playerPresence.get())
 				.build(context);
 	}
 }

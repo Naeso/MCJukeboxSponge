@@ -14,12 +14,14 @@ import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.event.cause.EventContextKeys;
 
+import java.util.Optional;
+
 public class ClientConnectListener implements Emitter.Listener {
 
 	private JukeboxAPI api;
 	private MCJukebox currentInstance;
-	private Player user;
 	private Cause cause;
+	private Optional<Player> playerPresence;
 
 	public ClientConnectListener(MCJukebox instance) {
 		api = new JukeboxAPI(instance);
@@ -29,31 +31,32 @@ public class ClientConnectListener implements Emitter.Listener {
 	@Override
 	public void call(Object... objects) {
 		JSONObject data = (JSONObject) objects[0];
-		user = Sponge.getServer().getPlayer(data.getString("username")).get();
-		this.buildCause();
-		ClientConnectEvent event = new ClientConnectEvent(
-				data.getString("username"), data.getLong("timestamp"), cause);
-		Sponge.getEventManager().post(event);
+		playerPresence = Sponge.getServer().getPlayer(data.getString("username"));
+		if (playerPresence.isPresent()) {
+			this.buildCause();
+			ClientConnectEvent event = new ClientConnectEvent(
+					data.getString("username"), data.getLong("timestamp"), cause);
+			Sponge.getEventManager().post(event);
 
-		if(!Sponge.getServer().getPlayer(data.getString("username")).isPresent()) return;
-		MessageUtils.sendMessage(user, "event.clientConnect");
+			MessageUtils.sendMessage(playerPresence.get(), "event.clientConnect");
 
-		ShowManager showManager = currentInstance.getShowManager();
-		if(!showManager.inInShow(user.getUniqueId())) return;
+			ShowManager showManager = currentInstance.getShowManager();
+			if(!showManager.inInShow(playerPresence.get().getUniqueId())) return;
 
-		for(Show show : showManager.getShowsByPlayer(user.getUniqueId())) {
-			if(show.getCurrentTrack() != null)
-				api.play(user, show.getCurrentTrack());
+			for(Show show : showManager.getShowsByPlayer(playerPresence.get().getUniqueId())) {
+				if(show.getCurrentTrack() != null)
+					api.play(playerPresence.get(), show.getCurrentTrack());
+			}
 		}
 	}
 
 	private void buildCause(){
 		EventContext context = EventContext.builder()
-				.add(EventContextKeys.PLAYER, user)
+				.add(EventContextKeys.PLAYER, playerPresence.get())
 				.build();
 
 		cause = Cause.builder()
-				.append(user)
+				.append(playerPresence.get())
 				.build(context);
 	}
 }
