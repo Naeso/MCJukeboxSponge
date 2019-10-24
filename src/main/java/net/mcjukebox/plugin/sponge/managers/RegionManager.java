@@ -58,7 +58,7 @@ public class RegionManager{
             databaseUtils.updateURLRegion(RegionName, URL);
             for (Player player : Sponge.getServer().getOnlinePlayers()) {
                 if(playerInRegion.containsKey(player.getPlayer().get().getUniqueId()) &&
-                        playerInRegion.get(player.getPlayer().get().getUniqueId()).equals(UUID.fromString(RegionName))) {
+                        playerInRegion.get(player.getPlayer().get().getUniqueId()).equals(RegionName)) {
                     playerInRegion.remove(player.getPlayer().get().getUniqueId());
                     api.stopMusic(player.getPlayer().get());
                     Media media = new Media(ResourceType.MUSIC, getURL(RegionName), currentInstance);
@@ -78,7 +78,7 @@ public class RegionManager{
             databaseUtils.deleteRegion(RegionName);
             for (Player player : Sponge.getServer().getOnlinePlayers()) {
                 if(playerInRegion.containsKey(player.getPlayer().get().getUniqueId()) &&
-                        playerInRegion.get(player.getPlayer().get().getUniqueId()).equals(UUID.fromString(RegionName))) {
+                        playerInRegion.get(player.getPlayer().get().getUniqueId()).equals(RegionName)) {
                     playerInRegion.remove(player.getPlayer().get().getUniqueId());
                     api.stopMusic(player.getPlayer().get());
                 }

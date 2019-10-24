@@ -61,7 +61,7 @@ public class RegionCommand implements CommandExecutor {
                     }
                 }
                 else{
-                    src.sendMessage(Text.of("You must provide URL in order to add region."));
+                    src.sendMessage(Text.builder("You must provide an URL in order to add region.").color(TextColors.RED).build());
                     return CommandResult.empty();
                 }
             }
@@ -108,30 +108,40 @@ public class RegionCommand implements CommandExecutor {
 
         if(commandChoice.equals("update")) {
             if (args.hasAny("regionName")) {
-                if (args.requireOne("regionName").equals("here") && (src instanceof Player)){
-                    if(RegionUtils.getLocalRegion(((Player) src).getLocation()) == null){
-                        src.sendMessage(Text.builder("You're not in a region !").color(TextColors.RED).build());
-                        src.sendMessage(Text.builder("Tip : check if you recently changed region's name. If so, delete the past jukebox region and register it again.").color(TextColors.RED).build());
-                        return CommandResult.empty();
-                    }
+                if (args.hasAny("URL")){
+                    if (args.requireOne("regionName").equals("here") && (src instanceof Player)){
+                        if(RegionUtils.getLocalRegion(((Player) src).getLocation()) == null){
+                            src.sendMessage(Text.builder("You're not in a region !").color(TextColors.RED).build());
+                            src.sendMessage(Text.builder("Tip : check if you recently changed region's name. If so, delete the past jukebox region and register it again.").color(TextColors.RED).build());
+                            return CommandResult.empty();
+                        }
 
-                    nameRegion = RegionUtils.getLocalRegion(((Player) src).getLocation()).getName();
+                        nameRegion = RegionUtils.getLocalRegion(((Player) src).getLocation()).getName();
 
-                    if (currentInstance.getRegionManager().hasRegion(nameRegion)) {
-                        currentInstance.getRegionManager().updateRegion(nameRegion, args.requireOne("URL"), src);
-                        return CommandResult.success();
+                        if (currentInstance.getRegionManager().hasRegion(nameRegion)) {
+                            currentInstance.getRegionManager().updateRegion(nameRegion, args.requireOne("URL"), src);
+                            return CommandResult.success();
+                        }
+                    }else {
+                        if (currentInstance.getRegionManager().hasRegion(args.requireOne("regionName").toString())) {
+                            currentInstance.getRegionManager().updateRegion(args.requireOne("regionName"), args.requireOne("URL"), src);
+                            return CommandResult.success();
+                        }
                     }
-                }else {
-                    if (currentInstance.getRegionManager().hasRegion(args.requireOne("regionName").toString())) {
-                        currentInstance.getRegionManager().updateRegion(args.requireOne("regionName"), args.requireOne("URL"), src);
-                        return CommandResult.success();
-                    }
+                } else{
+                    src.sendMessage(Text.builder("You must provide an URL in order to update the region.").color(TextColors.RED).build());
+                    return CommandResult.empty();
                 }
             } else {
                 errorCommandIdNotProvided(src);
                 return CommandResult.empty();
             }
             return CommandResult.empty();
+        }
+
+        if(commandChoice.equals("list")) {
+            src.sendMessage(Text.of("Sorry, this command is still being worked on."));
+            return CommandResult.success();
         }
         return CommandResult.empty();
     }
