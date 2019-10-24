@@ -27,9 +27,9 @@ public class HelpCommand implements CommandExecutor {
         src.sendMessage(Text.of("/jukebox setkey <apikey>"));
 
         if(currentInstance.doesUniverseGuardIsPresent()){
-            src.sendMessage(Text.of("/jukebox region add <id|'here'> <url/@show>"));
-            src.sendMessage(Text.of("/jukebox region update <id|'here'> <url/@show>"));
-            src.sendMessage(Text.of("/jukebox region remove <id|'here'>"));
+            src.sendMessage(Text.of("/jukebox region add <name|'here'> <url/@show>"));
+            src.sendMessage(Text.of("/jukebox region update <name|'here'> <url/@show>"));
+            src.sendMessage(Text.of("/jukebox region remove <name|'here'>"));
             //src.sendMessage(Text.of("/jukebox region list"));
         }
         return CommandResult.success();

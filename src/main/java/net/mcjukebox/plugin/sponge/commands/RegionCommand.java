@@ -29,7 +29,7 @@ public class RegionCommand implements CommandExecutor {
     private RegionManager regionManager;
     private LocalRegion currentRegion;
     private String commandChoice;
-    private String idRegion;
+    private String nameRegion;
     private String UrlRegion;
     private Optional<Player> playerPresence;
 
@@ -45,16 +45,18 @@ public class RegionCommand implements CommandExecutor {
         commandChoice = args.requireOne("AddRemoveUpdateList");
 
         if(commandChoice.equals("add")){
-            if (args.hasAny("idRegion")){
+            if (args.hasAny("regionName")){
                 if (args.hasAny("URL")){
-                    if (args.getOne("idRegion").get().equals("here") && (src instanceof Player)){
-                        UUID idRegion = RegionUtils.getLocalRegion(((Player) src).getLocation()).getId();
-                        currentInstance.getRegionManager().addRegion(idRegion.toString(), args.<String>getOne("URL").get());
-                        MessageUtils.sendMessage(src, "region.registered");
+                    if (args.getOne("regionName").get().equals("here") && (src instanceof Player)){
+                        if(RegionUtils.getLocalRegion(((Player) src).getLocation()) == null){
+                            src.sendMessage(Text.builder("You're not in a region !").color(TextColors.RED).build());
+                            return CommandResult.empty();
+                        }
+                        nameRegion = RegionUtils.getLocalRegion(((Player) src).getLocation()).getName();
+                        currentInstance.getRegionManager().addRegion(nameRegion, args.<String>getOne("URL").get(), src);
                         return CommandResult.success();
                     }else{
-                        currentInstance.getRegionManager().addRegion(args.<String>getOne("idRegion").get(), args.<String>getOne("URL").get());
-                        MessageUtils.sendMessage(src, "region.registered");
+                        currentInstance.getRegionManager().addRegion(args.<String>getOne("regionName").get(), args.<String>getOne("URL").get(), src);
                         return CommandResult.success();
                     }
                 }
@@ -71,20 +73,27 @@ public class RegionCommand implements CommandExecutor {
 
         // region remove <id>
         if(commandChoice.equals("remove")){
-            if (args.hasAny("idRegion")) {
-                if (args.getOne("idRegion").get().equals("here") && (src instanceof Player)){
-                    UUID idRegion = RegionUtils.getLocalRegion(((Player) src).getLocation()).getId();
-                    if (currentInstance.getRegionManager().hasRegion(idRegion.toString())) {
-                        currentInstance.getRegionManager().removeRegion(idRegion.toString());
+            if (args.hasAny("regionName")) {
+                if (args.getOne("regionName").get().equals("here") && (src instanceof Player)){
+                    if(RegionUtils.getLocalRegion(((Player) src).getLocation()) == null){
+                        src.sendMessage(Text.builder("You're not in a region !").color(TextColors.RED).build());
+                        src.sendMessage(Text.builder("Tip : check if you recently changed region's name. If so, delete the past jukebox region and register it again.").color(TextColors.RED).build());
+                        return CommandResult.empty();
+                    }
+
+                    nameRegion = RegionUtils.getLocalRegion(((Player) src).getLocation()).getName();
+
+                    if (currentInstance.getRegionManager().hasRegion(nameRegion)) {
+                        currentInstance.getRegionManager().removeRegion(nameRegion, src);
                         MessageUtils.sendMessage(src, "region.unregistered");
-                        removeKeys(idRegion);
+                        removeKeys(nameRegion);
                         return CommandResult.success();
                     }
                 }else{
-                    if (currentInstance.getRegionManager().hasRegion(args.getOne("idRegion").get().toString())) {
-                        currentInstance.getRegionManager().removeRegion(args.getOne("idRegion").get().toString());
+                    if (currentInstance.getRegionManager().hasRegion(args.getOne("regionName").get().toString())) {
+                        currentInstance.getRegionManager().removeRegion(args.getOne("regionName").get().toString(), src);
                         MessageUtils.sendMessage(src, "region.unregistered");
-                        removeKeys(UUID.fromString(args.getOne("idRegion").get().toString()));
+                        removeKeys((args.getOne("nameRegion").get().toString()));
                         return CommandResult.success();
                     }
                 }
@@ -98,16 +107,23 @@ public class RegionCommand implements CommandExecutor {
         }
 
         if(commandChoice.equals("update")) {
-            if (args.hasAny("idRegion")) {
-                if (args.requireOne("idRegion").equals("here") && (src instanceof Player)){
-                    UUID idRegion = RegionUtils.getLocalRegion(((Player) src).getLocation()).getId();
-                    if (currentInstance.getRegionManager().hasRegion(idRegion.toString())) {
-                        currentInstance.getRegionManager().updateRegion(idRegion.toString(), args.requireOne("URL"));
+            if (args.hasAny("regionName")) {
+                if (args.requireOne("regionName").equals("here") && (src instanceof Player)){
+                    if(RegionUtils.getLocalRegion(((Player) src).getLocation()) == null){
+                        src.sendMessage(Text.builder("You're not in a region !").color(TextColors.RED).build());
+                        src.sendMessage(Text.builder("Tip : check if you recently changed region's name. If so, delete the past jukebox region and register it again.").color(TextColors.RED).build());
+                        return CommandResult.empty();
+                    }
+
+                    nameRegion = RegionUtils.getLocalRegion(((Player) src).getLocation()).getName();
+
+                    if (currentInstance.getRegionManager().hasRegion(nameRegion)) {
+                        currentInstance.getRegionManager().updateRegion(nameRegion, args.requireOne("URL"), src);
                         return CommandResult.success();
                     }
                 }else {
-                    if (currentInstance.getRegionManager().hasRegion(args.requireOne("idRegion").toString())) {
-                        currentInstance.getRegionManager().updateRegion(args.requireOne("idRegion"), args.requireOne("URL"));
+                    if (currentInstance.getRegionManager().hasRegion(args.requireOne("regionName").toString())) {
+                        currentInstance.getRegionManager().updateRegion(args.requireOne("regionName"), args.requireOne("URL"), src);
                         return CommandResult.success();
                     }
                 }
@@ -121,20 +137,20 @@ public class RegionCommand implements CommandExecutor {
     }
 
     private void errorCommandIdNotProvided(CommandSource src){
-        src.sendMessage(Text.builder("You must provide ID of the region in order to add region.").color(TextColors.RED).build());
+        src.sendMessage(Text.builder("You must provide the name of the region in order to add region.").color(TextColors.RED).build());
         src.sendMessage(Text.builder("You can also use the keyword 'here' instead of the id to select the current region you're in.").color(TextColors.RED).build());
     }
 
-    private void removeKeys(UUID idRegion){
-        HashMap<UUID, UUID> playersInRegion = currentInstance.getRegionListener().getPlayerInRegion();
+    private void removeKeys(String nameRegion){
+        HashMap<UUID, String> playersInRegion = currentInstance.getRegionListener().getPlayerInRegion();
 
         Iterator<UUID> keys = playersInRegion.keySet().iterator();
 
         while (keys.hasNext()) {
             UUID uuid = keys.next();
-            UUID regionID = playersInRegion.get(uuid);
+            String regionName = playersInRegion.get(uuid);
 
-            if (regionID.equals(idRegion)) {
+            if (regionName.equals(nameRegion)) {
                 playerPresence = Sponge.getServer().getPlayer(uuid);
                 if (playerPresence.isPresent()) {
                     jukeboxAPI.stopMusic(Sponge.getServer().getPlayer(uuid).get());

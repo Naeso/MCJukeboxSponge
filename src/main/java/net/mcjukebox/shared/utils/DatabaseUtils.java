@@ -16,7 +16,7 @@ public class DatabaseUtils {
     public DatabaseUtils() { }
 
     private DataSource getDataSource() throws SQLException {
-        String uri = "jdbc:h2:./config/mcjukebox/region.db";
+        String uri = "jdbc:h2:./config/mcjukebox/jukeboxdatabase.db";
         if (sql == null) {
             sql = Sponge.getServiceManager().provide(SqlService.class).get();
         }
@@ -26,15 +26,16 @@ public class DatabaseUtils {
     public void createDatabase(){
         try (Connection conn = getDataSource().getConnection()) {
             PreparedStatement tableRegion = conn.prepareStatement(
-                    "CREATE TABLE IF NOT EXISTS Region (" +
-                            "RegionID Varchar(100) NOT NULL PRIMARY KEY," +
+                    "CREATE TABLE IF NOT EXISTS Regions (" +
+                            "RegionName Varchar(100) NOT NULL PRIMARY KEY," +
                             "URL Varchar(300) NOT NULL)");
             tableRegion.execute();
         } catch (SQLException e){
             e.printStackTrace();
         }
 
-        try (Connection conn = getDataSource().getConnection()) {
+        //Wait for the biome update... *wink* *wink*
+        /*try (Connection conn = getDataSource().getConnection()) {
             PreparedStatement tableRegion = conn.prepareStatement(
                     "CREATE TABLE IF NOT EXISTS Biomes (" +
                             "BiomesID Varchar(100) NOT NULL PRIMARY KEY," +
@@ -42,14 +43,14 @@ public class DatabaseUtils {
             tableRegion.execute();
         } catch (SQLException e){
             e.printStackTrace();
-        }
+        }*/
     }
 
-    public boolean doesIDRegionExistsInDatabase(String IDRegion){
+    public boolean doesRegionExistsInDatabase(String NameRegion){
         try (Connection conn = getDataSource().getConnection()) {
             PreparedStatement tryRegion = conn.prepareStatement(
-                    "SELECT RegionID FROM Region WHERE RegionID=?");
-            tryRegion.setObject(1, IDRegion);
+                    "SELECT RegionName FROM Regions WHERE RegionName=?");
+            tryRegion.setObject(1, NameRegion);
             ResultSet resultSet = tryRegion.executeQuery();
             if (resultSet.next()){
                 if(resultSet.wasNull()){
@@ -69,12 +70,12 @@ public class DatabaseUtils {
         return false;
     }
 
-    public String getURLRegion(String IDRegion){
-        if(doesIDRegionExistsInDatabase(IDRegion)){
+    public String getURLRegion(String NameRegion){
+        if(doesRegionExistsInDatabase(NameRegion)){
             try (Connection conn = getDataSource().getConnection()) {
                 PreparedStatement tryRegion = conn.prepareStatement(
-                        "SELECT URL FROM Region WHERE RegionID=?");
-                tryRegion.setString(1, IDRegion);
+                        "SELECT URL FROM Regions WHERE RegionName=?");
+                tryRegion.setString(1, NameRegion);
                 ResultSet resultSet = tryRegion.executeQuery();
                 if (resultSet.next()){
                     String url = resultSet.getString("URL");
@@ -89,38 +90,44 @@ public class DatabaseUtils {
         return "";
     }
 
-    public void setNewRegion(String IDRegion, String URLRegion){
-        try (Connection conn = getDataSource().getConnection()) {
-            PreparedStatement tryRegion = conn.prepareStatement(
-                    "INSERT INTO Region(RegionID, URL) VALUES (?, ?)");
-            tryRegion.setObject(1, IDRegion);
-            tryRegion.setObject(2, URLRegion);
-            tryRegion.execute();
-        } catch (SQLException e){
-            e.printStackTrace();
+    public void setNewRegion(String NameRegion, String URLRegion){
+        if(!doesRegionExistsInDatabase(NameRegion)){
+            try (Connection conn = getDataSource().getConnection()) {
+                PreparedStatement tryRegion = conn.prepareStatement(
+                        "INSERT INTO Regions(RegionName, URL) VALUES (?, ?)");
+                tryRegion.setObject(1, NameRegion);
+                tryRegion.setObject(2, URLRegion);
+                tryRegion.execute();
+            } catch (SQLException e){
+                e.printStackTrace();
+            }
         }
     }
 
-    public void updateURLRegion(String IDRegion, String URLRegion){
-        try (Connection conn = getDataSource().getConnection()) {
-            PreparedStatement tryRegion = conn.prepareStatement(
-                    "UPDATE Region SET URL=? WHERE RegionID=?");
-            tryRegion.setObject(1, URLRegion);
-            tryRegion.setObject(2, IDRegion);
-            tryRegion.execute();
-        } catch (SQLException e){
-            e.printStackTrace();
+    public void updateURLRegion(String NameRegion, String URLRegion){
+        if(doesRegionExistsInDatabase(NameRegion)){
+            try (Connection conn = getDataSource().getConnection()) {
+                PreparedStatement tryRegion = conn.prepareStatement(
+                        "UPDATE Regions SET URL=? WHERE RegionName=?");
+                tryRegion.setObject(1, URLRegion);
+                tryRegion.setObject(2, NameRegion);
+                tryRegion.execute();
+            } catch (SQLException e){
+                e.printStackTrace();
+            }
         }
     }
 
-    public void deleteRegion(String IDRegion){
-        try (Connection conn = getDataSource().getConnection()) {
-            PreparedStatement tryRegion = conn.prepareStatement(
-                    "DELETE FROM Region WHERE RegionID=?");
-            tryRegion.setObject(1, IDRegion);
-            tryRegion.executeUpdate();
-        } catch (SQLException e){
-            e.printStackTrace();
+    public void deleteRegion(String NameRegion){
+        if(doesRegionExistsInDatabase(NameRegion)){
+            try (Connection conn = getDataSource().getConnection()) {
+                PreparedStatement tryRegion = conn.prepareStatement(
+                        "DELETE FROM Regions WHERE RegionName=?");
+                tryRegion.setObject(1, NameRegion);
+                tryRegion.executeUpdate();
+            } catch (SQLException e){
+                e.printStackTrace();
+            }
         }
     }
 }

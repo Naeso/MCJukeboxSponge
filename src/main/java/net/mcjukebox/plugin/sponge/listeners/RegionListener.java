@@ -28,13 +28,13 @@ public class RegionListener{
     private JukeboxAPI api;
     private LocalRegion currentRegion;
     private DatabaseUtils databaseUtils;
-    private UUID currentRegionId;
+    private String currentRegionName;
     private RegionManager utils;
-    public HashMap<UUID, UUID> getPlayerInRegion() {
+    public HashMap<UUID, String> getPlayerInRegion() {
         return playerInRegion;
     }
 
-    private HashMap<UUID, UUID> playerInRegion = new HashMap<UUID, UUID>();
+    private HashMap<UUID, String> playerInRegion = new HashMap<UUID, String>();
 
     public RegionListener(RegionManager utils, MCJukebox instance){
         this.utils = utils;
@@ -97,7 +97,7 @@ public class RegionListener{
         if(currentInstance.doesUniverseGuardIsPresent()){
             if (RegionUtils.getLocalRegion(player.getLocation()) == null) {
                 if(playerInRegion.containsKey(player.getPlayer().get().getUniqueId()) &&
-                        playerInRegion.get(player.getPlayer().get().getUniqueId()).equals(currentRegionId)){
+                        playerInRegion.get(player.getPlayer().get().getUniqueId()).equals(currentRegionName)){
                     playerInRegion.remove(player.getPlayer().get().getUniqueId());
                     api.stopMusic(player.getPlayer().get());
                     return;
@@ -106,19 +106,19 @@ public class RegionListener{
             }
             else{
                 currentRegion = RegionUtils.getLocalRegion(player.getLocation());
-                currentRegionId = currentRegion.getId();
+                currentRegionName = currentRegion.getName();
                 ShowManager showManager = currentInstance.getShowManager();
 
                 if(playerInRegion.containsKey(player.getPlayer().get().getUniqueId()) &&
-                        playerInRegion.get(player.getPlayer().get().getUniqueId()).equals(currentRegionId)){
+                        playerInRegion.get(player.getPlayer().get().getUniqueId()).equals(currentRegionName)){
                     return;
                 }
 
                 if(playerInRegion.containsKey(player.getPlayer().get().getUniqueId()) &&
                         utils.getURL(playerInRegion.get(player.getPlayer().get().getUniqueId())).equals(
-                                utils.getURL(currentRegionId))) {
+                                utils.getURL(currentRegionName))) {
                     // No need to restart the track, or re-add them to a show, but still update our records
-                    playerInRegion.put(player.getPlayer().get().getUniqueId(), currentRegionId);
+                    playerInRegion.put(player.getPlayer().get().getUniqueId(), currentRegionName);
                     return;
                 }
 
@@ -135,10 +135,10 @@ public class RegionListener{
                     playerInRegion.put(player.getPlayer().get().getUniqueId(), currentRegionId);
                     return;
                 }}*/
-                if (databaseUtils.doesIDRegionExistsInDatabase(currentRegionId.toString())) {
-                    Media media = new Media(ResourceType.MUSIC, utils.getURL(currentRegionId), currentInstance);
+                if (databaseUtils.doesRegionExistsInDatabase(currentRegionName)) {
+                    Media media = new Media(ResourceType.MUSIC, utils.getURL(currentRegionName), currentInstance);
                     api.play(player.getPlayer().get(), media);
-                    playerInRegion.put(player.getPlayer().get().getUniqueId(), currentRegionId);
+                    playerInRegion.put(player.getPlayer().get().getUniqueId(), currentRegionName);
                 }
             }
         }

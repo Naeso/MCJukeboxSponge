@@ -52,7 +52,7 @@ public class JukeboxCommandExecutor{
                 .executor(new RegionCommand(regionManager, currentInstance))
                 .arguments(
                         GenericArguments.string(Text.of("AddRemoveUpdateList")),
-                        GenericArguments.optionalWeak(GenericArguments.string(Text.of("idRegion"))),
+                        GenericArguments.optionalWeak(GenericArguments.string(Text.of("regionName"))),
                         GenericArguments.optionalWeak(GenericArguments.string(Text.of("URL")))
                 )
                 .build();

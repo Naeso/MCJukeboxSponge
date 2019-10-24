@@ -49,9 +49,9 @@ public class LangManager {
 	 * Adds all default configuration values to the JSON Object.
 	 */
 	private void addDefaults() throws JSONException {
-		addDefault("region.registered", "Region registered!");
-		addDefault("region.unregistered", "Region unregistered!");
-		addDefault("region.notregistered", "That region is not registered!");
+		addDefault("region.registered", "Region registered for MCJukebox!");
+		addDefault("region.unregistered", "Region unregistered for MCJukebox!");
+		addDefault("region.notregistered", "That region is not registered for MCJukebox!");
 
 		addDefault("user.openLoading", "Generating link...");
 		addDefault("user.openClient", "Click here to launch our custom music client. ");
