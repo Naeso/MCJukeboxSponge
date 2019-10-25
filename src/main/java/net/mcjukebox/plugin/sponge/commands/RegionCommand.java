@@ -14,6 +14,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
@@ -143,7 +144,12 @@ public class RegionCommand implements CommandExecutor {
         }
 
         if(commandChoice.equals("list")) {
-            src.sendMessage(Text.of("Sorry, this command is still being worked on."));
+            PaginationList.builder()
+                    .title(Text.of("List of regions"))
+                    .contents(regionManager.getAllRegisteredRegion())
+                    .linesPerPage(10)
+                    .padding(Text.builder("=").color(TextColors.GOLD).build())
+                    .sendTo(src);
             return CommandResult.success();
         }
 

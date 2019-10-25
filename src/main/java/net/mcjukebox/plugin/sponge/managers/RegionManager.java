@@ -15,12 +15,9 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import javax.xml.crypto.Data;
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
 public class RegionManager{
@@ -95,5 +92,9 @@ public class RegionManager{
 
     public String getURL(String RegionName){
         return databaseUtils.getURLRegion(RegionName);
+    }
+
+    public List<Text> getAllRegisteredRegion(){
+        return databaseUtils.getAllRegion();
     }
 }

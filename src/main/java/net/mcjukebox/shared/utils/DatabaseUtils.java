@@ -2,13 +2,16 @@ package net.mcjukebox.shared.utils;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.service.sql.SqlService;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import javax.sql.DataSource;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseUtils {
     private SqlService sql;
@@ -128,6 +131,30 @@ public class DatabaseUtils {
             } catch (SQLException e){
                 e.printStackTrace();
             }
+        }
+    }
+
+    public List<Text> getAllRegion(){
+        List<Text> listRegion = new ArrayList<>();
+        try (Connection conn = getDataSource().getConnection()) {
+            PreparedStatement tryRegion = conn.prepareStatement(
+                    "SELECT RegionName,URL FROM Regions");
+            ResultSet resultSet = tryRegion.executeQuery();
+            while (resultSet.next()){
+                String url = resultSet.getString("URL");
+                url = url.substring(url.lastIndexOf("/") + 1);
+                listRegion.add(
+                        Text.builder("Name: ").color(TextColors.GREEN).append(
+                                Text.of(TextColors.WHITE, resultSet.getString("RegionName"))).append(
+                                        Text.builder(" Music: ").color(TextColors.GREEN).append(
+                                                Text.of(TextColors.WHITE, url)).build()).build());
+            }
+            resultSet.close();
+            conn.close();
+            return listRegion;
+        } catch (SQLException e){
+            e.printStackTrace();
+            return listRegion;
         }
     }
 }
