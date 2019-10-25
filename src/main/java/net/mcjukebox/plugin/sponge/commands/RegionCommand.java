@@ -54,6 +54,7 @@ public class RegionCommand implements CommandExecutor {
                         }
                         nameRegion = RegionUtils.getLocalRegion(((Player) src).getLocation()).getName();
                         currentInstance.getRegionManager().addRegion(nameRegion, args.<String>getOne("URL").get(), src);
+
                         return CommandResult.success();
                     }else{
                         currentInstance.getRegionManager().addRegion(args.<String>getOne("regionName").get(), args.<String>getOne("URL").get(), src);
@@ -93,7 +94,7 @@ public class RegionCommand implements CommandExecutor {
                     if (currentInstance.getRegionManager().hasRegion(args.getOne("regionName").get().toString())) {
                         currentInstance.getRegionManager().removeRegion(args.getOne("regionName").get().toString(), src);
                         MessageUtils.sendMessage(src, "region.unregistered");
-                        removeKeys((args.getOne("nameRegion").get().toString()));
+                        removeKeys((args.getOne("regionName").get().toString()));
                         return CommandResult.success();
                     }
                 }
@@ -121,6 +122,8 @@ public class RegionCommand implements CommandExecutor {
                         if (currentInstance.getRegionManager().hasRegion(nameRegion)) {
                             currentInstance.getRegionManager().updateRegion(nameRegion, args.requireOne("URL"), src);
                             return CommandResult.success();
+                        }else{
+                            src.sendMessage(Text.builder("Unknown region.").color(TextColors.RED).build());
                         }
                     }else {
                         if (currentInstance.getRegionManager().hasRegion(args.requireOne("regionName").toString())) {
@@ -143,12 +146,14 @@ public class RegionCommand implements CommandExecutor {
             src.sendMessage(Text.of("Sorry, this command is still being worked on."));
             return CommandResult.success();
         }
+
+        src.sendMessage(Text.builder("This command does not exist !").color(TextColors.RED).build());
         return CommandResult.empty();
     }
 
     private void errorCommandIdNotProvided(CommandSource src){
         src.sendMessage(Text.builder("You must provide the name of the region in order to add region.").color(TextColors.RED).build());
-        src.sendMessage(Text.builder("You can also use the keyword 'here' instead of the id to select the current region you're in.").color(TextColors.RED).build());
+        src.sendMessage(Text.builder("You can also use the keyword 'here' instead of the name to select the current region you're in.").color(TextColors.RED).build());
     }
 
     private void removeKeys(String nameRegion){

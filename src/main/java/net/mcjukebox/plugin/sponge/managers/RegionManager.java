@@ -13,6 +13,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import javax.xml.crypto.Data;
 import java.io.File;
@@ -47,7 +48,7 @@ public class RegionManager{
             databaseUtils.setNewRegion(RegionName, URL);
             MessageUtils.sendMessage(src, "region.registered");
         }else{
-            src.sendMessage(Text.of("This region already exists !"));
+            src.sendMessage(Text.builder("This region is already registered in MCJukebox !").color(TextColors.RED).build());
         }
     }
 
@@ -66,7 +67,7 @@ public class RegionManager{
                 }
             }
         }else{
-            src.sendMessage(Text.of("This region dosen't exists !"));
+            src.sendMessage(Text.builder("Unknown region.").color(TextColors.RED).build());
         }
     }
 
@@ -84,7 +85,7 @@ public class RegionManager{
                 }
             }
         }else{
-            src.sendMessage(Text.of("This region dosen't exist !"));
+            src.sendMessage(Text.builder("Unknown region.").color(TextColors.RED).build());
         }
     }
 
