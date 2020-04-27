@@ -135,7 +135,7 @@ public class MCJukebox {
             return dataUtils.loadAPIKey(privateConfigDir.resolve("api.key"));
         }
         else{
-            logger.info("Api.key file dosen't exists ! Creating one...");
+            logger.info("Api.key file does not exists ! Creating one...");
             dataUtils.saveObjectToPath(new KeyClass(""), privateConfigDir.resolve("api.key"));
             return "";
         }

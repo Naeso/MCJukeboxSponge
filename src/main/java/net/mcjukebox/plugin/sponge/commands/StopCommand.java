@@ -27,12 +27,8 @@ public class StopCommand implements CommandExecutor {
 
     private String selectionMusicOrAll;
 
-    private Collection<Player> allPlayers;
-    private Player targetPlayer;
-    private Optional<Player> playerPresence;
+    private Collection<Player> ListOfPlayerSelected;
     private String targetShow;
-    private boolean isAShow;
-    private boolean isTargetingAllPlayers;
 
     private int fadeDuration;
     private String channel;
@@ -47,22 +43,10 @@ public class StopCommand implements CommandExecutor {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        if (args.<String>requireOne("UserOrShow").startsWith("@")) {
-            if (args.<String>requireOne("UserOrShow").matches("^@a$")) {
-                allPlayers = Sponge.getServer().getOnlinePlayers();
-                isTargetingAllPlayers = true;
-            }else{
-                targetShow = args.requireOne("UserOrShow");
-                isAShow = true;
-                isTargetingAllPlayers = false;
-            }
-        } else{
-            playerPresence = Sponge.getServer().getPlayer(args.<String>requireOne("UserOrShow"));
-            if (playerPresence.isPresent()) {
-                targetPlayer = playerPresence.get();
-                isAShow = false;
-                isTargetingAllPlayers = false;
-            }
+        if(args.hasAny("Show")){
+            targetShow = args.requireOne("Show");
+        }else if (args.hasAny("User")){
+            ListOfPlayerSelected = args.getAll("User");
         }
 
         selectionMusicOrAll = args.<String>getOne("MusicOrAll").orElse("music");
@@ -78,7 +62,7 @@ public class StopCommand implements CommandExecutor {
         fadeDuration = options.has("fadeDuration") ? options.getInt("fadeDuration") : -1;
         channel = options.has("channel") ? options.getString("channel") : "default";
 
-        if(isAShow){
+        if(args.hasAny("Show")){
             // Stop everything in a show
             if (selectionMusicOrAll.equalsIgnoreCase("all")) {
                 api.getShowManager().getShow(targetShow).stopAll(fadeDuration);
@@ -92,38 +76,17 @@ public class StopCommand implements CommandExecutor {
             }
         }
 
-        //If the selector "@a" was used; if not, the sender selected one player.
-        if (isTargetingAllPlayers) {
-            for (Player user : allPlayers) {
+        if (args.hasAny("User")) {
+            for (Player user : ListOfPlayerSelected) {
                 if (selectionMusicOrAll.equalsIgnoreCase("all")) {
                     api.stopAll(user, channel, fadeDuration);
-                    return CommandResult.success();
                 }
 
                 if (selectionMusicOrAll.equalsIgnoreCase("music")) {
                     api.stopMusic(user, channel, fadeDuration);
-                    return CommandResult.success();
                 }
             }
-        }else{
-            if(playerPresence.isPresent()){
-                // Stop music for a particular player
-                if (selectionMusicOrAll.equalsIgnoreCase("all")) {
-                    api.stopAll(targetPlayer, channel, fadeDuration);
-                    return CommandResult.success();
-                }
-
-                // Stop everything for a particular player
-                if (selectionMusicOrAll.equalsIgnoreCase("music")) {
-                    api.stopMusic(targetPlayer, channel, fadeDuration);
-                    return CommandResult.success();
-                }
-            }else{
-                HashMap<String, String> findAndReplace = new HashMap<String, String>();
-                findAndReplace.put("user", args.requireOne("UserOrShow"));
-                src.sendMessage(Text.builder(langManager.get("command.notOnline")).color(TextColors.RED).build());
-                return CommandResult.empty();
-            }
+            return CommandResult.success();
         }
         return CommandResult.empty();
     }

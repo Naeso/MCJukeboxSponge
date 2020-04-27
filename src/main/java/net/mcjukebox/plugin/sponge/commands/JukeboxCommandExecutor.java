@@ -6,6 +6,7 @@ import net.mcjukebox.plugin.sponge.managers.RegionManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
 public class JukeboxCommandExecutor{
@@ -25,13 +26,15 @@ public class JukeboxCommandExecutor{
         CommandSpec helpCommand = CommandSpec.builder()
                 .description(Text.of("help command"))
                 .executor(new HelpCommand(currentInstance))
+                .permission("mcjukebox.command.help")
                 .build();
 
         CommandSpec musicCommand = CommandSpec.builder()
                 .description(Text.of("music command"))
                 .executor(new PlayCommand(currentInstance, ResourceType.MUSIC))
+                .permission("mcjukebox.command.music")
                 .arguments(
-                        GenericArguments.string(Text.of("UserOrShow")),
+                        GenericArguments.firstParsing(GenericArguments.player(Text.of("User")), GenericArguments.string(Text.of("Show"))),
                         GenericArguments.string(Text.of("URL")),
                         GenericArguments.optionalWeak(GenericArguments.remainingJoinedStrings(Text.of("options")))
                 )
@@ -40,8 +43,9 @@ public class JukeboxCommandExecutor{
         CommandSpec soundCommand = CommandSpec.builder()
                 .description(Text.of("sound command"))
                 .executor(new PlayCommand(currentInstance, ResourceType.SOUND_EFFECT))
+                .permission("mcjukebox.command.sound")
                 .arguments(
-                        GenericArguments.string(Text.of("UserOrShow")),
+                        GenericArguments.firstParsing(GenericArguments.player(Text.of("User")), GenericArguments.string(Text.of("Show"))),
                         GenericArguments.string(Text.of("URL")),
                         GenericArguments.optionalWeak(GenericArguments.remainingJoinedStrings(Text.of("options")))
                 )
@@ -50,6 +54,7 @@ public class JukeboxCommandExecutor{
         CommandSpec regionCommand = CommandSpec.builder()
                 .description(Text.of("region command"))
                 .executor(new RegionCommand(regionManager, currentInstance))
+                .permission("mcjukebox.command.region")
                 .arguments(
                         GenericArguments.string(Text.of("AddRemoveUpdateList")),
                         GenericArguments.optionalWeak(GenericArguments.string(Text.of("regionName"))),
@@ -60,6 +65,7 @@ public class JukeboxCommandExecutor{
         CommandSpec setKeyCommand = CommandSpec.builder()
                 .description(Text.of("setkey api command"))
                 .executor(new SetKeyCommand(currentInstance))
+                .permission("mcjukebox.command.setkey")
                 .arguments(
                         GenericArguments.string(Text.of("apikey"))
                 )
@@ -68,6 +74,7 @@ public class JukeboxCommandExecutor{
         CommandSpec showCommand = CommandSpec.builder()
                 .description(Text.of("show command"))
                 .executor(new ShowCommand(currentInstance))
+                .permission("mcjukebox.command.show")
                 .arguments(
                         GenericArguments.string(Text.of("addRemove")),
                         GenericArguments.string(Text.of("targetPlayer")),
@@ -78,8 +85,9 @@ public class JukeboxCommandExecutor{
         CommandSpec stopCommand = CommandSpec.builder()
                 .description(Text.of("stop command"))
                 .executor(new StopCommand(currentInstance))
+                .permission("mcjukebox.command.stop")
                 .arguments(
-                        GenericArguments.string(Text.of("UserOrShow")),
+                        GenericArguments.firstParsing(GenericArguments.player(Text.of("User")), GenericArguments.string(Text.of("Show"))),
                         GenericArguments.optionalWeak(GenericArguments.string(Text.of("MusicOrAll"))),
                         GenericArguments.optionalWeak(GenericArguments.remainingJoinedStrings(Text.of("options")))
                 )
